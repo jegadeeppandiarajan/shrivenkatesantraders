@@ -56,8 +56,8 @@ Gmail was blocking SMTP connections because:
 #### Step 3: Update .env File
 
 ```env
-SMTP_USER=jegadeeppandiyarajan@gmail.com
-SMTP_PASS=[16-character app password from Step 2]
+SMTP_USER=your-email@gmail.com
+SMTP_PASS=YOUR_16_CHAR_APP_PASSWORD
 SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
 SMTP_SECURE=false

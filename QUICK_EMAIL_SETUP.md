@@ -23,12 +23,12 @@
 ```
 File: backend/.env
 
-Find these lines:
-SMTP_USER=jegadeeppandiyarajan@gmail.com
-SMTP_PASS=vfqiziokcveiybgt
+Update these lines:
+SMTP_USER=your-email@gmail.com
+SMTP_PASS=YOUR_16_CHAR_APP_PASSWORD
 
-Replace with:
-SMTP_PASS=xyzwabcdefghijkl
+Example format:
+SMTP_PASS=abcd efgh ijkl mnop (without spaces)
 ```
 
 ## STEP 5: Restart Backend
@@ -60,7 +60,7 @@ You should see:
 SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
 SMTP_SECURE=false
-SMTP_USER=jegadeeppandiyarajan@gmail.com
+SMTP_USER=your-email@gmail.com
 SMTP_PASS=YOUR_16_CHAR_APP_PASSWORD
 ```
 

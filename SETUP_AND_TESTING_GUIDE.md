@@ -103,8 +103,8 @@
 #### ✅ Step 3: Update .env File
 
 ```
-SMTP_USER=jegadeeppandiyarajan@gmail.com
-SMTP_PASS=[YOUR 16-CHARACTER APP PASSWORD]
+SMTP_USER=your-email@gmail.com
+SMTP_PASS=YOUR_16_CHAR_APP_PASSWORD
 SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
 SMTP_SECURE=false
