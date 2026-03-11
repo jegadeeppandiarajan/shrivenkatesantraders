@@ -209,7 +209,7 @@ const Navbar = () => {
             {/* Dark Mode Toggle */}
             <button
               onClick={toggleDarkMode}
-              className="relative p-2.5 sm:p-3 bg-slate-50 dark:bg-dark-hover hover:bg-slate-100 dark:hover:bg-dark-border text-slate-700 dark:text-white transition-all duration-300 group border border-slate-200 dark:border-dark-border hover:border-slate-300 dark:hover:border-brand-primary/50 rounded-xl"
+              className="hidden sm:block relative p-2.5 sm:p-3 bg-slate-50 dark:bg-dark-hover hover:bg-slate-100 dark:hover:bg-dark-border text-slate-700 dark:text-white transition-all duration-300 group border border-slate-200 dark:border-dark-border hover:border-slate-300 dark:hover:border-brand-primary/50 rounded-xl"
               aria-label="Toggle dark mode"
             >
               {darkMode ? (
@@ -452,6 +452,15 @@ const Navbar = () => {
                 Admin Panel
               </Link>
             )}
+
+            {/* AI Chat - Mobile */}
+            <button
+              onClick={() => { setAiChatOpen(true); setMobileMenuOpen(false); }}
+              className="flex items-center gap-3 px-4 py-3.5 rounded-2xl text-base font-extrabold text-slate-700 dark:text-dark-text hover:bg-gradient-to-r hover:from-brand-light hover:to-brand-accent/20 dark:hover:from-dark-hover dark:hover:to-brand-secondary/20 hover:text-brand-primary dark:hover:text-brand-secondary transition-all sm:hidden"
+            >
+              <AutoAwesomeIcon sx={{ fontSize: 22 }} />
+              AI Assistant
+            </button>}
           </nav>
 
           {/* User Section */}
@@ -508,8 +517,8 @@ const Navbar = () => {
       </div>
 
       {/* AI CHAT PANEL - FLOATING */}
-      <div className={`fixed bottom-6 right-6 z-40 transition-all duration-300 ${aiChatOpen ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'}`}>
-        <div className={`w-80 max-w-[calc(100vw-48px)] rounded-2xl border-2 overflow-hidden transition-all duration-300 shadow-2xl ${darkMode ? 'bg-dark-card border-dark-border shadow-brand-secondary/20' : 'bg-white border-slate-200 shadow-brand-primary/20'}`}>
+      <div className={`fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-40 transition-all duration-300 ${aiChatOpen ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'}`}>
+        <div className={`w-[calc(100vw-32px)] sm:w-80 max-w-sm rounded-2xl border-2 overflow-hidden transition-all duration-300 shadow-2xl ${darkMode ? 'bg-dark-card border-dark-border shadow-brand-secondary/20' : 'bg-white border-slate-200 shadow-brand-primary/20'}`}>
           {/* Header */}
           <div className={`p-4 bg-gradient-to-r from-brand-primary via-brand-gold to-brand-honey dark:from-brand-secondary dark:via-brand-honey dark:to-brand-primary text-white dark:text-dark-bg flex items-center justify-between`}>
             <div className="flex items-center gap-2">

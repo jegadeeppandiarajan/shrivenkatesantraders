@@ -95,7 +95,7 @@ const About = () => {
       </section>
 
       {/* Our Story */}
-      <section className={`py-24 z-10 relative ${darkMode ? 'bg-dark-card/80' : 'bg-white/80'} backdrop-blur-sm`}>
+      <section className={`py-12 sm:py-24 z-10 relative ${darkMode ? 'bg-dark-card/80' : 'bg-white/80'} backdrop-blur-sm`}>
         <div className="max-w-7xl mx-auto px-4">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <div className={`transition-all duration-1000 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'}`}>
@@ -103,7 +103,7 @@ const About = () => {
                 <WorkspacePremiumIcon sx={{ fontSize: 18 }} className="text-brand-primary" />
                 <span className="text-sm font-semibold text-brand-primary">Our Story</span>
               </div>
-              <h2 className={`text-3xl md:text-4xl font-display font-bold mb-6 ${darkMode ? 'text-dark-text' : 'text-brand-dark'}`}>
+              <h2 className={`text-2xl sm:text-3xl md:text-4xl font-display font-bold mb-6 ${darkMode ? 'text-dark-text' : 'text-brand-dark'}`}>
                 From Humble Beginnings to Industry Leadership
               </h2>
               <div className={`space-y-4 leading-relaxed font-display ${darkMode ? 'text-dark-muted' : 'text-brand-slate'}`}>
@@ -158,7 +158,7 @@ const About = () => {
       </section>
 
       {/* Our Values */}
-      <section className={`py-24 ${darkMode ? 'bg-dark-bg' : 'bg-white'} relative overflow-hidden`}>
+      <section className={`py-12 sm:py-24 ${darkMode ? 'bg-dark-bg' : 'bg-white'} relative overflow-hidden`}>
         <GlitterBackground />
         <div className="max-w-7xl mx-auto px-4 relative z-10">
           <div className="text-center mb-16">
@@ -166,7 +166,7 @@ const About = () => {
               <HandshakeIcon sx={{ fontSize: 18 }} className="text-brand-secondary" />
               <span className="text-sm font-semibold text-brand-secondary">Our Values</span>
             </div>
-            <h2 className={`text-3xl md:text-4xl font-bold ${darkMode ? 'text-dark-text' : 'text-brand-dark'}`}>
+            <h2 className={`text-2xl sm:text-3xl md:text-4xl font-bold ${darkMode ? 'text-dark-text' : 'text-brand-dark'}`}>
               What Drives Us Forward
             </h2>
             <p className={`mt-4 max-w-2xl mx-auto ${darkMode ? 'text-dark-muted' : 'text-brand-slate'}`}>
@@ -196,14 +196,14 @@ const About = () => {
       </section>
 
       {/* Team Section */}
-      <section className={`py-24 ${darkMode ? 'bg-dark-card' : 'bg-brand-cream'}`}>
+      <section className={`py-12 sm:py-24 ${darkMode ? 'bg-dark-card' : 'bg-brand-cream'}`}>
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center mb-16">
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-brand-primary/10 rounded-full mb-6">
               <GroupsIcon sx={{ fontSize: 18 }} className="text-brand-primary" />
               <span className="text-sm font-semibold text-brand-primary">Our Team</span>
             </div>
-            <h2 className={`text-3xl md:text-4xl font-bold ${darkMode ? 'text-dark-text' : 'text-brand-dark'}`}>
+            <h2 className={`text-2xl sm:text-3xl md:text-4xl font-bold ${darkMode ? 'text-dark-text' : 'text-brand-dark'}`}>
               Meet the People Behind Our Success
             </h2>
             <p className={`mt-4 max-w-2xl mx-auto ${darkMode ? 'text-dark-muted' : 'text-brand-slate'}`}>
@@ -235,14 +235,14 @@ const About = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-24 bg-gradient-to-br from-brand-gold via-brand-primary to-brand-gold relative overflow-hidden">
+      <section className="py-12 sm:py-24 bg-gradient-to-br from-brand-gold via-brand-primary to-brand-gold relative overflow-hidden">
         <div className="absolute inset-0">
           <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-white/5 rounded-full blur-[100px]"></div>
           <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-brand-secondary/10 rounded-full blur-[80px]"></div>
         </div>
 
         <div className="max-w-4xl mx-auto px-4 relative z-10 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-6">
             Ready to Partner with Us?
           </h2>
           <p className="text-xl text-white/70 mb-10 max-w-2xl mx-auto">

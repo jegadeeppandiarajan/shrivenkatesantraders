@@ -81,7 +81,7 @@ const Footer = () => {
       {/* Features Bar */}
       <div className="border-b border-white/10 dark:border-dark-border relative">
         <div className="max-w-7xl mx-auto px-4 py-6 sm:py-8">
-          <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             {features.map((feature, index) => (
               <div key={index} className="group flex items-center gap-3 sm:gap-4 p-4 sm:p-5 bg-white/5 dark:bg-dark-card hover:bg-white/10 dark:hover:bg-dark-hover border border-white/10 dark:border-dark-border transition-all duration-300 hover:-translate-y-1">
                 <div className="w-12 h-12 sm:w-14 sm:h-14 bg-brand-primary flex items-center justify-center text-white flex-shrink-0 group-hover:scale-105 transition-all duration-300">

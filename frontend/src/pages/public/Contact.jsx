@@ -106,7 +106,7 @@ const Contact = () => {
       <AnimatedBackground />
 
       {/* Contact Methods */}
-      <section className={`py-16 relative transition-colors duration-700 ${darkMode ? 'bg-dark-bg' : 'bg-white'}`}>
+      <section className={`py-10 sm:py-16 relative transition-colors duration-700 ${darkMode ? 'bg-dark-bg' : 'bg-white'}`}>
         <div className="max-w-6xl mx-auto px-4">
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {contactMethods.map((method, index) => (
@@ -139,9 +139,9 @@ const Contact = () => {
       </section>
 
       {/* Main Contact Section */}
-      <section className={`py-24 ${darkMode ? 'bg-dark-bg' : 'bg-brand-cream'}`}>
+      <section className={`py-12 sm:py-24 ${darkMode ? 'bg-dark-bg' : 'bg-brand-cream'}`}>
         <div className="max-w-7xl mx-auto px-4">
-          <div className="grid lg:grid-cols-2 gap-16">
+          <div className="grid lg:grid-cols-2 gap-8 sm:gap-12 lg:gap-16">
             {/* Contact Form */}
             <div className={`transition-all duration-1000 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'}`}>
               <h2 className={`text-3xl font-display font-bold mb-2 ${darkMode ? 'text-dark-text' : 'text-brand-dark'}`}>Send Us a Message</h2>
@@ -314,10 +314,10 @@ const Contact = () => {
       </section>
 
       {/* FAQ Section */}
-      <section className={`py-24 ${darkMode ? 'bg-dark-card' : 'bg-white'}`}>
+      <section className={`py-12 sm:py-24 ${darkMode ? 'bg-dark-card' : 'bg-white'}`}>
         <div className="max-w-4xl mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className={`text-3xl font-bold mb-4 ${darkMode ? 'text-dark-text' : 'text-brand-dark'}`}>Frequently Asked Questions</h2>
+          <div className="text-center mb-8 sm:mb-12">
+            <h2 className={`text-2xl sm:text-3xl font-bold mb-4 ${darkMode ? 'text-dark-text' : 'text-brand-dark'}`}>Frequently Asked Questions</h2>
             <p className={darkMode ? 'text-dark-muted' : 'text-brand-slate'}>Quick answers to common questions</p>
           </div>
 
@@ -354,7 +354,7 @@ const Contact = () => {
       </section>
 
       {/* Map Section */}
-      <section className={`py-24 ${darkMode ? 'bg-dark-bg' : 'bg-brand-cream'}`}>
+      <section className={`py-12 sm:py-24 ${darkMode ? 'bg-dark-bg' : 'bg-brand-cream'}`}>
         <div className="max-w-7xl mx-auto px-4">
           <div className={`rounded-3xl shadow-xl overflow-hidden ${darkMode ? 'bg-dark-card border border-dark-border' : 'bg-white'}`}>
             <div className="grid lg:grid-cols-3">

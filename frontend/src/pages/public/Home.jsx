@@ -97,7 +97,7 @@ const Home = () => {
               </p>
 
               {/* Main Headline */}
-              <h1 className={`mb-6 text-4xl sm:text-5xl lg:text-6xl font-display font-black leading-[1.05] tracking-tight ${darkMode ? 'text-white' : 'text-brand-dark'}`}>
+              <h1 className={`mb-6 text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-display font-black leading-[1.05] tracking-tight ${darkMode ? 'text-white' : 'text-brand-dark'}`}>
                 PIPES & MOTORS
                 <br />
                 <span className="text-brand-primary">DIRECT</span>
@@ -130,7 +130,7 @@ const Home = () => {
 
             {/* Right Side - Stats Grid */}
             <div className={`transition-all duration-1000 delay-200 ${heroInView ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10'}`}>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-3 sm:gap-4">
                 {[
                   { value: "600+", label: "Products Listed", icon: "📦" },
                   { value: "25+", label: "Years Experience", icon: "⭐" },
@@ -139,10 +139,10 @@ const Home = () => {
                 ].map((stat, i) => (
                   <div 
                     key={i} 
-                    className={`p-6 sm:p-8 transition-all duration-500 hover:-translate-y-1 ${darkMode ? 'bg-dark-card border border-dark-border hover:border-brand-primary/50' : 'bg-white border border-stone-200 hover:border-brand-primary shadow-sm hover:shadow-md'}`}
+                    className={`p-4 sm:p-6 md:p-8 transition-all duration-500 hover:-translate-y-1 ${darkMode ? 'bg-dark-card border border-dark-border hover:border-brand-primary/50' : 'bg-white border border-stone-200 hover:border-brand-primary shadow-sm hover:shadow-md'}`}
                     style={{ transitionDelay: `${i * 100}ms` }}
                   >
-                    <p className={`text-3xl sm:text-4xl lg:text-5xl font-display font-black mb-2 ${darkMode ? 'text-white' : 'text-brand-dark'}`}>
+                    <p className={`text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-display font-black mb-2 ${darkMode ? 'text-white' : 'text-brand-dark'}`}>
                       {stat.value}
                     </p>
                     <p className={`uppercase tracking-wider text-xs sm:text-sm font-bold ${darkMode ? 'text-brand-primary' : 'text-brand-primary'}`}>
@@ -165,12 +165,12 @@ const Home = () => {
       </section>
 
       {/* PRODUCTS - Industrial Section */}
-      <section ref={productsRef} className={`relative z-10 py-16 sm:py-24 transition-colors duration-700 ${darkMode ? 'bg-dark-card/50' : 'bg-white'}`}>
+      <section ref={productsRef} className={`relative z-10 py-12 sm:py-16 md:py-24 transition-colors duration-700 ${darkMode ? 'bg-dark-card/50' : 'bg-white'}`}>
         <div className="max-w-7xl px-4 sm:px-6 lg:px-8 mx-auto">
-          <div className={`flex flex-col items-center justify-between mb-10 sm:mb-14 lg:flex-row transition-all duration-700 ${productsInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-            <div className="text-center lg:text-left mb-8 lg:mb-0">
+          <div className={`flex flex-col items-center justify-between mb-8 sm:mb-10 md:mb-14 lg:flex-row transition-all duration-700 ${productsInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+            <div className="text-center lg:text-left mb-6 sm:mb-8 lg:mb-0">
               <p className={`uppercase tracking-[0.2em] text-sm font-bold mb-2 ${darkMode ? 'text-brand-primary' : 'text-brand-primary'}`}>Featured Products</p>
-              <h2 className={`text-3xl sm:text-4xl md:text-5xl font-display font-black ${darkMode ? 'text-white' : 'text-brand-dark'}`}>BEST SELLERS</h2>
+              <h2 className={`text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-display font-black ${darkMode ? 'text-white' : 'text-brand-dark'}`}>BEST SELLERS</h2>
               <p className={`mt-2 text-base sm:text-lg ${darkMode ? 'text-dark-muted' : 'text-stone-600'}`}>Quality products trusted by thousands</p>
             </div>
             <Link
@@ -297,7 +297,7 @@ const Home = () => {
       </section>
 
       {/* CTA - Industrial Section */}
-      <section ref={ctaRef} className={`relative z-10 py-16 sm:py-24 overflow-hidden transition-colors duration-700 ${darkMode ? 'bg-dark-bg' : 'bg-brand-cream'}`}>
+      <section ref={ctaRef} className={`relative z-10 py-12 sm:py-16 md:py-24 overflow-hidden transition-colors duration-700 ${darkMode ? 'bg-dark-bg' : 'bg-brand-cream'}`}>
         
         <div className={`relative max-w-5xl px-4 sm:px-6 lg:px-8 mx-auto transition-all duration-1000 ${ctaInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
           <div className="grid lg:grid-cols-2 gap-12 items-center">
@@ -306,7 +306,7 @@ const Home = () => {
               <p className="uppercase tracking-[0.2em] text-sm font-bold text-brand-primary mb-4">
                 Get Started Today
               </p>
-              <h2 className={`text-3xl sm:text-4xl lg:text-5xl font-black leading-tight mb-6 ${darkMode ? 'text-white' : 'text-slate-900'}`}>
+              <h2 className={`text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black leading-tight mb-6 ${darkMode ? 'text-white' : 'text-slate-900'}`}>
                 UPGRADE YOUR
                 <br />
                 <span className="text-brand-primary">SUPPLY CHAIN</span>
@@ -357,7 +357,7 @@ const Home = () => {
       </section>
 
       {/* FOOTER INFO - Industrial Section */}
-      <section ref={footerRef} className={`py-16 border-t transition-colors duration-700 ${darkMode ? 'bg-dark-card border-dark-border' : 'bg-stone-100 border-stone-200'}`}>
+      <section ref={footerRef} className={`py-10 sm:py-16 border-t transition-colors duration-700 ${darkMode ? 'bg-dark-card border-dark-border' : 'bg-stone-100 border-stone-200'}`}>
         <div className={`max-w-7xl px-4 mx-auto transition-all duration-700 ${footerInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
