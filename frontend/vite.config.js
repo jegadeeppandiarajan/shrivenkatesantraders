@@ -8,9 +8,9 @@ export default defineConfig({
     strictPort: true,
     proxy: {
       "/api": {
-        target: "https://shrivenkatesantraders.vercel.app/",
+        target: "https://shrivenkatesantraders.onrender.com",
         changeOrigin: true,
-        secure: false,
+        secure: true,
       },
     },
   },
