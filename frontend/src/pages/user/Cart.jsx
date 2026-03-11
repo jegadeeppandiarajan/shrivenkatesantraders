@@ -17,7 +17,7 @@ import SupportAgentIcon from "@mui/icons-material/SupportAgent";
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 
 // Get base URL for images (strip /api suffix if present)
-const IMAGE_BASE_URL = (import.meta.env.VITE_API_URL || "http://localhost:5000/api").replace(/\/api\/?$/, "");
+const IMAGE_BASE_URL = (import.meta.env.VITE_API_URL || "https://shrivenkatesantraders.onrender.com/api").replace(/\/api\/?$/, "");
 
 const Cart = () => {
   const dispatch = useDispatch();

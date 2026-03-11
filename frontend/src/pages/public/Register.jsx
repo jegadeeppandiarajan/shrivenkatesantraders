@@ -13,7 +13,7 @@ import PhoneIcon from '@mui/icons-material/Phone';
 import LockIcon from '@mui/icons-material/Lock';
 
 const Register = () => {
-  const apiUrl = import.meta.env.VITE_API_URL?.replace(/\/api$/, "") || "http://localhost:5000";
+  const apiUrl = import.meta.env.VITE_API_URL?.replace(/\/api$/, "") || "https://shrivenkatesantraders.onrender.com";
   const dispatch = useDispatch();
   const navigate = useNavigate();
   

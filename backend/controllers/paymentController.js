@@ -36,13 +36,13 @@ const updateInventoryForOrder = async (order) => {
   // Check if inventory was already updated to prevent double updates
   if (order.inventoryUpdated) {
     console.log(
-      `[Inventory] Skipping - already updated for order ${order._id}`
+      `[Inventory] Skipping - already updated for order ${order._id}`,
     );
     return false;
   }
 
   console.log(
-    `[Inventory] Reducing stock for order ${order._id} with ${order.items.length} items`
+    `[Inventory] Reducing stock for order ${order._id} with ${order.items.length} items`,
   );
 
   try {
@@ -51,25 +51,25 @@ const updateInventoryForOrder = async (order) => {
         const result = await Product.findByIdAndUpdate(
           item.product,
           { $inc: { stock: -item.quantity, salesCount: item.quantity } },
-          { new: true }
+          { new: true },
         );
         console.log(
-          `[Inventory] Updated ${item.name}: reduced by ${item.quantity}, new stock: ${result?.stock}`
+          `[Inventory] Updated ${item.name}: reduced by ${item.quantity}, new stock: ${result?.stock}`,
         );
         return result;
-      })
+      }),
     );
 
     // Mark inventory as updated
     await Order.findByIdAndUpdate(order._id, { inventoryUpdated: true });
     console.log(
-      `[Inventory] ✅ Successfully updated inventory for order ${order._id}`
+      `[Inventory] ✅ Successfully updated inventory for order ${order._id}`,
     );
     return true;
   } catch (error) {
     console.error(
       `[Inventory] ❌ Failed to update inventory for order ${order._id}:`,
-      error
+      error,
     );
     throw error;
   }
@@ -154,12 +154,12 @@ exports.createCheckoutSession = asyncHandler(async (req, res) => {
     const customerEmail = order.user?.email;
     if (!customerEmail) {
       throw new Error(
-        `Customer email is required for payment. Please update your profile or use a valid account.`
+        `Customer email is required for payment. Please update your profile or use a valid account.`,
       );
     }
 
     console.log(
-      `[Stripe] Creating session for order ${order._id} with ${lineItems.length} items for ${customerEmail}`
+      `[Stripe] Creating session for order ${order._id} with ${lineItems.length} items for ${customerEmail}`,
     );
 
     const session = await stripe.checkout.sessions.create({
@@ -173,10 +173,10 @@ exports.createCheckoutSession = asyncHandler(async (req, res) => {
       },
       line_items: lineItems,
       success_url: `${
-        process.env.CLIENT_URL || "http://localhost:3000"
+        process.env.CLIENT_URL || "https://shrivenkatesantraders.vercel.app"
       }/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${
-        process.env.CLIENT_URL || "http://localhost:3000"
+        process.env.CLIENT_URL || "https://shrivenkatesantraders.vercel.app"
       }/checkout/cancelled`,
     });
 
@@ -222,7 +222,7 @@ exports.handleStripeWebhook = asyncHandler(async (req, res) => {
     event = stripe.webhooks.constructEvent(
       req.body,
       sig,
-      process.env.STRIPE_WEBHOOK_SECRET
+      process.env.STRIPE_WEBHOOK_SECRET,
     );
   } catch (err) {
     console.error("Stripe webhook signature verification failed", err.message);
@@ -248,7 +248,7 @@ exports.handleStripeWebhook = asyncHandler(async (req, res) => {
       // Fetch full order with user details for email
       const populatedOrder = await Order.findById(order._id).populate(
         "user",
-        "name email"
+        "name email",
       );
 
       // Send confirmation email with error handling
@@ -256,24 +256,24 @@ exports.handleStripeWebhook = asyncHandler(async (req, res) => {
         const emailResult = await sendOrderConfirmationEmail(populatedOrder);
         if (emailResult.success) {
           console.log(
-            `📧 Order confirmation email sent successfully for order ${order._id}`
+            `📧 Order confirmation email sent successfully for order ${order._id}`,
           );
         } else {
           console.warn(
-            `⚠️ Failed to send email for order ${order._id}: ${emailResult.error}`
+            `⚠️ Failed to send email for order ${order._id}: ${emailResult.error}`,
           );
         }
       } catch (emailError) {
         console.error(
           `❌ Error sending confirmation email for order ${order._id}:`,
-          emailError.message
+          emailError.message,
         );
         // Don't fail the payment process if email fails
       }
 
       await Cart.findOneAndUpdate(
         { user: order.user },
-        { items: [], totalItems: 0, totalPrice: 0 }
+        { items: [], totalItems: 0, totalPrice: 0 },
       );
 
       emitOrderStatus(order._id.toString(), {
@@ -320,7 +320,7 @@ exports.verifySession = asyncHandler(async (req, res) => {
     // If Stripe is not configured, try to find order by session ID
     const order = await Order.findOne({ stripeSessionId: sessionId })
       .select(
-        "orderNumber totalAmount orderStatus paymentStatus items createdAt"
+        "orderNumber totalAmount orderStatus paymentStatus items createdAt",
       )
       .populate("items.product", "name images");
 
@@ -350,7 +350,7 @@ exports.verifySession = asyncHandler(async (req, res) => {
     // Find the order associated with this session
     const order = await Order.findOne({ stripeSessionId: sessionId }).populate(
       "items.product",
-      "name images"
+      "name images",
     );
 
     if (!order) {
@@ -386,13 +386,13 @@ exports.verifySession = asyncHandler(async (req, res) => {
       // Send confirmation email
       const populatedOrder = await Order.findById(order._id).populate(
         "user",
-        "name email"
+        "name email",
       );
       await sendOrderConfirmationEmail(populatedOrder);
 
       await Cart.findOneAndUpdate(
         { user: order.user },
-        { items: [], totalItems: 0, totalPrice: 0 }
+        { items: [], totalItems: 0, totalPrice: 0 },
       );
 
       // Emit socket events
@@ -424,7 +424,7 @@ exports.verifySession = asyncHandler(async (req, res) => {
 
     // Try to find order even if Stripe verification fails
     const order = await Order.findOne({ stripeSessionId: sessionId }).select(
-      "_id orderNumber totalAmount orderStatus paymentStatus"
+      "_id orderNumber totalAmount orderStatus paymentStatus",
     );
 
     if (order) {

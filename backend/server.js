@@ -42,17 +42,18 @@ connectDB();
 app.use(
   helmet({
     crossOriginResourcePolicy: { policy: "cross-origin" },
-  })
+  }),
 );
 
 // CORS configuration
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || "http://localhost:3000",
+    origin:
+      process.env.CLIENT_URL || "https://shrivenkatesantraders.vercel.app",
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
-  })
+  }),
 );
 
 // Body parser - JSON (skip Stripe webhook)
@@ -127,7 +128,7 @@ server.listen(PORT, () => {
   ║                                                            ║
   ║   Server running in ${process.env.NODE_ENV} mode                    ║
   ║   Port: ${PORT}                                              ║
-  ║   API: http://localhost:${PORT}/api                          ║
+  ║   API: ${process.env.BACKEND_URL || "http://localhost:" + PORT}/api         ║
   ║                                                            ║
   ╚════════════════════════════════════════════════════════════╝
   `);

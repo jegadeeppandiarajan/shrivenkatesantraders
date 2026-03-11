@@ -118,7 +118,8 @@ const notifyUsersAboutNewProduct = async (product) => {
               </p>
               
               <a href="${
-                process.env.FRONTEND_URL || "http://localhost:5173"
+                process.env.FRONTEND_URL ||
+                "https://shrivenkatesantraders.vercel.app"
               }/products/${product._id}" 
                  style="display: inline-block; background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%); color: white; text-decoration: none; padding: 14px 32px; border-radius: 12px; font-weight: 600; font-size: 16px; margin-top: 10px;">
                 View Product Details →
@@ -156,7 +157,7 @@ Price: ₹${product.price?.toLocaleString() || "Contact for price"}
 ${product.shortDescription || product.description || ""}
 
 Visit our website to check it out!
-${process.env.FRONTEND_URL || "http://localhost:5173"}/products/${product._id}
+${process.env.FRONTEND_URL || "https://shrivenkatesantraders.vercel.app"}/products/${product._id}
 
 Thank you for being a valued customer!
 Shri Venkatesan Traders
@@ -425,7 +426,8 @@ const sendOrderConfirmationEmail = async (order) => {
           <tr>
             <td style="padding: 0 40px 30px 40px; text-align: center;">
               <a href="${
-                process.env.CLIENT_URL || "http://localhost:3000"
+                process.env.CLIENT_URL ||
+                "https://shrivenkatesantraders.vercel.app"
               }/orders/${order._id}" 
                  style="display: inline-block; background: linear-gradient(135deg, #E67E22 0%, #f59e0b 100%); color: white; text-decoration: none; padding: 16px 40px; border-radius: 12px; font-weight: 700; font-size: 15px; box-shadow: 0 4px 15px rgba(230, 126, 34, 0.3);">
                 📍 Track Your Order
@@ -516,7 +518,7 @@ ${shippingAddress.city || ""}, ${shippingAddress.state || ""} - ${
     : ""
 }
 
-Track your order: ${process.env.CLIENT_URL || "http://localhost:3000"}/orders/${
+Track your order: ${process.env.CLIENT_URL || "https://shrivenkatesantraders.vercel.app"}/orders/${
       order._id
     }
 
@@ -822,7 +824,7 @@ const sendOrderStatusUpdateEmail = async (order, status, note) => {
               <a href="${
                 process.env.FRONTEND_URL ||
                 process.env.CLIENT_URL ||
-                "http://localhost:5173"
+                "https://shrivenkatesantraders.vercel.app"
               }/orders/${populatedOrder._id}" 
                  style="display: inline-block; background: linear-gradient(135deg, #0A5C80 0%, #0ea5e9 100%); color: white; text-decoration: none; padding: 16px 40px; border-radius: 12px; font-weight: 700; font-size: 15px; box-shadow: 0 4px 15px rgba(10, 92, 128, 0.3);">
                 📍 Track Your Order
@@ -855,7 +857,7 @@ const sendOrderStatusUpdateEmail = async (order, status, note) => {
       } Track your order at: ${
         process.env.FRONTEND_URL ||
         process.env.CLIENT_URL ||
-        "http://localhost:5173"
+        "https://shrivenkatesantraders.vercel.app"
       }/orders/${populatedOrder._id}`,
     });
 

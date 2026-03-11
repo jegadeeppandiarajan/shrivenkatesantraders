@@ -11,7 +11,7 @@ import StarIcon from '@mui/icons-material/Star';
 
 const categories = ["Pipes", "Motors", "Accessories", "Fittings", "Valves", "Pumps"];
 // Get base URL for images (strip /api suffix if present)
-const IMAGE_BASE_URL = (import.meta.env.VITE_API_URL || "http://localhost:5000/api").replace(/\/api\/?$/, "");
+const IMAGE_BASE_URL = (import.meta.env.VITE_API_URL || "https://shrivenkatesantraders.onrender.com/api").replace(/\/api\/?$/, "");
 
 const ProductSkeleton = ({ darkMode }) => (
   <div className={`rounded-3xl border shadow-lg overflow-hidden ${darkMode ? 'bg-dark-card border-dark-border' : 'bg-white border-brand-primary/10'}`}>

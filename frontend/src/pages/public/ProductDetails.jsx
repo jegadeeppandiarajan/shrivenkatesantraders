@@ -150,7 +150,7 @@ const ProductDetails = () => {
 
   const hasUserReviewed = reviews.some(review => review.user?._id === user?._id);
   // Get base URL for images (strip /api suffix if present)
-  const apiUrl = (import.meta.env.VITE_API_URL || 'http://localhost:5000/api').replace(/\/api\/?$/, '');
+  const apiUrl = (import.meta.env.VITE_API_URL || 'https://shrivenkatesantraders.onrender.com/api').replace(/\/api\/?$/, '');
   const { darkMode } = useTheme();
 
   return (

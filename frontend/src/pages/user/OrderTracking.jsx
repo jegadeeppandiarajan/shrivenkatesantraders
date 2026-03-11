@@ -17,7 +17,7 @@ import PhoneIcon from "@mui/icons-material/Phone";
 import PersonIcon from "@mui/icons-material/Person";
 
 // Get base URL for images (strip /api suffix if present)
-const API_URL = (import.meta.env.VITE_API_URL || "http://localhost:5000/api").replace(/\/api\/?$/, "");
+const API_URL = (import.meta.env.VITE_API_URL || "https://shrivenkatesantraders.onrender.com/api").replace(/\/api\/?$/, "");
 
 const timelineMap = ["pending", "confirmed", "processing", "shipped", "out_for_delivery", "delivered"];
 

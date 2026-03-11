@@ -25,7 +25,7 @@ const categories = ["Pipes", "Motors", "Accessories", "Fittings", "Valves", "Pum
 
 // Get base URL for images (strip /api suffix if present)
 const getBaseUrl = () => {
-  const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+  const apiUrl = import.meta.env.VITE_API_URL || 'https://shrivenkatesantraders.onrender.com/api';
   return apiUrl.replace(/\/api\/?$/, '');
 };
 

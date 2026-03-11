@@ -7,7 +7,7 @@ export const SocketProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);
 
   useEffect(() => {
-    const socketUrl = import.meta.env.VITE_SOCKET_URL || "http://localhost:5000";
+    const socketUrl = import.meta.env.VITE_SOCKET_URL || "https://shrivenkatesantraders.onrender.com";
     const instance = io(socketUrl, {
       withCredentials: true,
       transports: ["polling", "websocket"], // Start with polling, upgrade to websocket

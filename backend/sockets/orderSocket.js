@@ -5,7 +5,8 @@ let io;
 const initSocket = (server) => {
   io = new Server(server, {
     cors: {
-      origin: process.env.CLIENT_URL || "http://localhost:3000",
+      origin:
+        process.env.CLIENT_URL || "https://shrivenkatesantraders.vercel.app",
       methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
       credentials: true,
     },
