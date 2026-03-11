@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 52" width="260" height="52">
+  <defs>
+    <linearGradient id="badge-bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1C1C1C" />
+      <stop offset="100%" style="stop-color:#0F0F0F" />
+    </linearGradient>
+  </defs>
+  <!-- Badge - Dark charcoal with copper accent -->
+  <rect x="0" y="2" width="48" height="48" rx="10" fill="url(#badge-bg)" stroke="#D97706" stroke-width="2" />
+  <text x="24" y="36" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="800" fill="#D97706">SV</text>
+  <!-- Text - White for dark backgrounds -->
+  <text x="58" y="22" font-family="Inter, sans-serif" font-size="15" font-weight="700" fill="#ffffff">Shri Venkatesan</text>
+  <text x="58" y="42" font-family="Inter, sans-serif" font-size="12" font-weight="500" fill="#D97706">Traders</text>
+</svg>

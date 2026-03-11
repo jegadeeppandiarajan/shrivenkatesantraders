@@ -7,6 +7,7 @@ const {
   updateOrderStatus,
   cancelOrder,
   getOrderTimeline,
+  sendInvoiceEmail,
 } = require("../controllers/orderController");
 const { protect, adminOnly } = require("../middleware/auth");
 const { validateOrder } = require("../middleware/validators");
@@ -20,6 +21,7 @@ router.post("/", validateOrder, createOrder);
 router.get("/", getMyOrders);
 router.put("/:id/status", adminOnly, updateOrderStatus);
 router.post("/:id/cancel", cancelOrder);
+router.post("/:id/send-invoice", adminOnly, sendInvoiceEmail);
 router.get("/:id/timeline", getOrderTimeline);
 router.get("/:id", getOrderById);
 

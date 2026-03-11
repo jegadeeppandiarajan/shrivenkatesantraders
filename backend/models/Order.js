@@ -179,6 +179,11 @@ const orderSchema = new mongoose.Schema(
   }
 );
 
+// Virtual for status alias (for frontend compatibility)
+orderSchema.virtual("status").get(function () {
+  return this.orderStatus;
+});
+
 // Generate order number before saving
 orderSchema.pre("save", async function (next) {
   if (this.isNew) {

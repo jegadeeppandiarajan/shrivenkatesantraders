@@ -1,4 +1,4 @@
-const transporter = require("../config/email");
+const { transporter, sendMail, useResend } = require("../config/email");
 const User = require("../models/User");
 
 /**
@@ -6,28 +6,24 @@ const User = require("../models/User");
  */
 const sendEmail = async ({ to, subject, html, text }) => {
   try {
-    // Check if email service is configured
-    if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
+    // Check if any email service is configured
+    if (!useResend && (!process.env.SMTP_USER || !process.env.SMTP_PASS)) {
       console.warn(
-        "⚠️ Email service not configured. SMTP_USER or SMTP_PASS missing."
+        "⚠️ Email service not configured. Set RESEND_API_KEY or SMTP credentials.",
       );
       return { success: false, error: "Email service not configured" };
     }
 
-    const mailOptions = {
-      from: `"${process.env.APP_NAME || "Shri Venkatesan Traders"}" <${
-        process.env.SMTP_USER
-      }>`,
-      to,
-      subject,
-      text,
-      html,
-    };
-
     console.log(`📧 Sending email to: ${to}`);
-    const info = await transporter.sendMail(mailOptions);
-    console.log("✅ Email sent:", info.messageId);
-    return { success: true, messageId: info.messageId };
+
+    // Use the unified sendMail function (works with both Resend and SMTP)
+    const result = await sendMail({ to, subject, html, text });
+
+    if (result.success) {
+      console.log("✅ Email sent:", result.messageId);
+    }
+
+    return result;
   } catch (error) {
     console.error("❌ Error sending email:", error.message);
     return { success: false, error: error.message };
@@ -41,8 +37,8 @@ const notifyUsersAboutNewProduct = async (product) => {
   try {
     console.log("🔔 Starting new product notification for:", product.name);
 
-    // Check if email service is configured
-    if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
+    // Check if any email service is configured
+    if (!useResend && (!process.env.SMTP_USER || !process.env.SMTP_PASS)) {
       console.warn("⚠️ Email service not configured. Skipping notifications.");
       return {
         success: false,
@@ -179,7 +175,7 @@ Shri Venkatesan Traders
           subject,
           html,
           text,
-        })
+        }),
       );
 
       const results = await Promise.allSettled(emailPromises);
@@ -198,7 +194,7 @@ Shri Venkatesan Traders
     }
 
     console.log(
-      `Product notification emails sent: ${successCount} success, ${failCount} failed`
+      `Product notification emails sent: ${successCount} success, ${failCount} failed`,
     );
     return { success: true, notified: successCount, failed: failCount };
   } catch (error) {
@@ -236,7 +232,7 @@ const sendOrderConfirmationEmail = async (order) => {
     // Calculate subtotal, GST, etc.
     const subtotal = items.reduce(
       (sum, item) => sum + item.price * item.quantity,
-      0
+      0,
     );
     const gstRate = 18; // 18% GST
     const gstAmount = (subtotal * gstRate) / 100;
@@ -258,13 +254,13 @@ const sendOrderConfirmationEmail = async (order) => {
           item.quantity
         }</td>
         <td style="padding: 14px; border-bottom: 1px solid #e2e8f0; text-align: right; color: #334155;">${formatCurrency(
-          item.price
+          item.price,
         )}</td>
         <td style="padding: 14px; border-bottom: 1px solid #e2e8f0; text-align: right; font-weight: 600; color: #1e293b;">
           ${formatCurrency(item.price * item.quantity)}
         </td>
       </tr>
-    `
+    `,
       )
       .join("");
 
@@ -355,8 +351,8 @@ const sendOrderConfirmationEmail = async (order) => {
                   ${shippingAddress.fullName || user.name}<br>
                   ${shippingAddress.street || ""}<br>
                   ${shippingAddress.city || ""}, ${
-                  shippingAddress.state || ""
-                } - ${shippingAddress.pincode || ""}<br>
+                    shippingAddress.state || ""
+                  } - ${shippingAddress.pincode || ""}<br>
                   ${shippingAddress.country || "India"}
                 </p>
               </div>
@@ -397,7 +393,7 @@ const sendOrderConfirmationEmail = async (order) => {
                       <tr>
                         <td style="padding: 12px 20px; font-size: 13px; color: #64748b;">Subtotal:</td>
                         <td style="padding: 12px 20px; text-align: right; font-size: 13px; font-weight: 600; color: #334155;">${formatCurrency(
-                          subtotal
+                          subtotal,
                         )}</td>
                       </tr>
                       ${
@@ -406,7 +402,7 @@ const sendOrderConfirmationEmail = async (order) => {
                       <tr>
                         <td style="padding: 12px 20px; font-size: 13px; color: #64748b;">Shipping:</td>
                         <td style="padding: 12px 20px; text-align: right; font-size: 13px; font-weight: 600; color: #334155;">${formatCurrency(
-                          shippingCharge
+                          shippingCharge,
                         )}</td>
                       </tr>
                       `
@@ -415,7 +411,7 @@ const sendOrderConfirmationEmail = async (order) => {
                       <tr style="background: linear-gradient(135deg, #0A5C80 0%, #0ea5e9 100%);">
                         <td style="padding: 15px 20px; font-size: 14px; font-weight: 700; color: #fff;">TOTAL:</td>
                         <td style="padding: 15px 20px; text-align: right; font-size: 20px; font-weight: 800; color: #fff;">${formatCurrency(
-                          totalAmount
+                          totalAmount,
                         )}</td>
                       </tr>
                     </table>
@@ -434,6 +430,21 @@ const sendOrderConfirmationEmail = async (order) => {
                  style="display: inline-block; background: linear-gradient(135deg, #E67E22 0%, #f59e0b 100%); color: white; text-decoration: none; padding: 16px 40px; border-radius: 12px; font-weight: 700; font-size: 15px; box-shadow: 0 4px 15px rgba(230, 126, 34, 0.3);">
                 📍 Track Your Order
               </a>
+            </td>
+          </tr>
+
+          <!-- Order Status & Tracking Info -->
+          <tr>
+            <td style="padding: 0 40px 25px 40px;">
+              <div style="background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%); padding: 20px; border-radius: 12px; border: 2px solid #10b981;">
+                <p style="margin: 0 0 12px 0; font-size: 14px; font-weight: 700; color: #065f46;">✅ Order Status: Confirmed</p>
+                <p style="margin: 0 0 8px 0; font-size: 13px; color: #047857; line-height: 1.6;">
+                  Your order has been confirmed and is being prepared for dispatch.
+                </p>
+                ${order.trackingNumber ? `<p style="margin: 8px 0 0 0; font-size: 13px; color: #047857;"><strong>Tracking ID:</strong> <span style="background: #fff; padding: 3px 10px; border-radius: 6px; font-family: monospace; font-weight: 700;">${order.trackingNumber}</span></p>` : ""}
+                ${order.courier ? `<p style="margin: 5px 0 0 0; font-size: 13px; color: #047857;"><strong>Courier:</strong> ${order.courier}</p>` : ""}
+                ${order.estimatedDelivery ? `<p style="margin: 5px 0 0 0; font-size: 13px; color: #047857;"><strong>Estimated Delivery:</strong> ${new Date(order.estimatedDelivery).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}</p>` : ""}
+              </div>
             </td>
           </tr>
 
@@ -481,8 +492,8 @@ ${items
   .map(
     (item, i) =>
       `${i + 1}. ${item.name} x${item.quantity} - ${formatCurrency(
-        item.price * item.quantity
-      )}`
+        item.price * item.quantity,
+      )}`,
   )
   .join("\n")}
 
@@ -509,6 +520,12 @@ Track your order: ${process.env.CLIENT_URL || "http://localhost:3000"}/orders/${
       order._id
     }
 
+ORDER STATUS: CONFIRMED ✅
+Your order has been confirmed and is being prepared for dispatch.
+${order.trackingNumber ? `Tracking ID: ${order.trackingNumber}` : ""}
+${order.courier ? `Courier: ${order.courier}` : ""}
+${order.estimatedDelivery ? `Estimated Delivery: ${new Date(order.estimatedDelivery).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}` : ""}
+
 Thank you for shopping with us!
 Shri Venkatesan Traders
     `;
@@ -526,7 +543,7 @@ Shri Venkatesan Traders
       await sendEmail({
         to: process.env.ADMIN_EMAIL,
         subject: `[ADMIN] New Order Invoice #${invoiceNumber} - ${formatCurrency(
-          totalAmount
+          totalAmount,
         )}`,
         html,
         text: textContent,
@@ -549,7 +566,7 @@ const sendOrderStatusUpdateEmail = async (order, status, note) => {
     // Check if email service is configured
     if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
       console.warn(
-        "⚠️ Email service not configured. Skipping status update email."
+        "⚠️ Email service not configured. Skipping status update email.",
       );
       return { success: false, error: "Email service not configured" };
     }
@@ -644,16 +661,16 @@ const sendOrderStatusUpdateEmail = async (order, status, note) => {
               <div style="display: inline-block; background-color: ${
                 config.bgColor
               }; padding: 20px 40px; border-radius: 16px; border: 2px solid ${
-      config.color
-    };">
+                config.color
+              };">
                 <span style="font-size: 48px; display: block; margin-bottom: 10px;">${
                   config.icon
                 }</span>
                 <span style="font-size: 24px; font-weight: 800; color: ${
                   config.color
                 }; text-transform: uppercase; letter-spacing: 1px;">${
-      config.label
-    }</span>
+                  config.label
+                }</span>
               </div>
             </td>
           </tr>
@@ -725,7 +742,7 @@ const sendOrderStatusUpdateEmail = async (order, status, note) => {
                   <tr>
                     <td style="padding: 5px 0; color: #64748b; font-size: 13px;">Total Amount:</td>
                     <td style="padding: 5px 0; text-align: right; font-weight: 700; color: #0ea5e9; font-size: 14px;">₹${populatedOrder.totalAmount?.toLocaleString(
-                      "en-IN"
+                      "en-IN",
                     )}</td>
                   </tr>
                   <tr>
@@ -738,7 +755,7 @@ const sendOrderStatusUpdateEmail = async (order, status, note) => {
                         year: "numeric",
                         hour: "2-digit",
                         minute: "2-digit",
-                      }
+                      },
                     )}</td>
                   </tr>
                 </table>
@@ -784,7 +801,7 @@ const sendOrderStatusUpdateEmail = async (order, status, note) => {
                 ${
                   populatedOrder.estimatedDelivery
                     ? `<p style="margin: 0; font-size: 13px; color: #0c4a6e;"><strong>Expected Delivery:</strong> ${new Date(
-                        populatedOrder.estimatedDelivery
+                        populatedOrder.estimatedDelivery,
                       ).toLocaleDateString("en-IN", {
                         day: "2-digit",
                         month: "short",
@@ -844,7 +861,7 @@ const sendOrderStatusUpdateEmail = async (order, status, note) => {
 
     if (result.success) {
       console.log(
-        `✅ Order status email sent for #${populatedOrder.orderNumber} - ${config.label}`
+        `✅ Order status email sent for #${populatedOrder.orderNumber} - ${config.label}`,
       );
     }
     return result;

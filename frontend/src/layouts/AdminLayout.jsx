@@ -18,7 +18,6 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import SearchIcon from '@mui/icons-material/Search';
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
-import SettingsIcon from '@mui/icons-material/Settings';
 
 const adminNav = [
   { to: "/admin", label: "Overview", icon: DashboardIcon, end: true },
@@ -58,7 +57,7 @@ const AdminLayout = () => {
               {/* Mobile Menu Button */}
               <button 
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className={`lg:hidden p-2 rounded-xl transition-colors ${
+                className={`lg:hidden p-2 rounded-2xl transition-colors ${
                   darkMode ? 'hover:bg-dark-hover text-dark-text' : 'hover:bg-slate-100 text-slate-600'
                 }`}
               >
@@ -67,7 +66,7 @@ const AdminLayout = () => {
               
               <Link to="/admin" className="flex items-center gap-3 group">
                 <div className="relative">
-                  <div className="h-11 w-11 rounded-xl bg-gradient-to-br from-brand-primary via-brand-secondary to-brand-gold text-white flex items-center justify-center font-bold text-lg shadow-lg group-hover:shadow-brand-primary/30 group-hover:scale-105 transition-all duration-300">
+                  <div className="h-11 w-11 rounded-2xl bg-gradient-to-br from-brand-primary via-brand-secondary to-brand-gold text-white flex items-center justify-center font-bold text-lg shadow-lg group-hover:shadow-brand-primary/30 group-hover:scale-105 transition-all duration-300">
                     SV
                   </div>
                   <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white dark:border-dark-card animate-pulse"></div>
@@ -77,7 +76,7 @@ const AdminLayout = () => {
                     darkMode ? 'text-brand-primary' : 'text-brand-gold'
                   }`}>Admin Panel</p>
                   <h1 className={`text-lg font-bold ${
-                    darkMode ? 'text-dark-text' : 'text-slate-800'
+                    darkMode ? 'text-dark-text' : 'text-brand-dark'
                   }`}>Shri Venkatesan</h1>
                 </div>
               </Link>
@@ -92,10 +91,10 @@ const AdminLayout = () => {
                 <input
                   type="text"
                   placeholder="Search orders, products, users..."
-                  className={`w-full pl-12 pr-4 py-2.5 rounded-xl text-sm transition-all duration-300 ${
+                  className={`w-full pl-12 pr-4 py-2.5 rounded-2xl text-sm transition-all duration-300 ${
                     darkMode 
                       ? 'bg-dark-bg border-dark-border text-dark-text placeholder-dark-muted focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20' 
-                      : 'bg-slate-50 border-slate-200 text-slate-800 placeholder-slate-400 focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 focus:bg-white'
+                      : 'bg-slate-50 border-slate-200 text-brand-dark placeholder-slate-400 focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 focus:bg-white'
                   } border outline-none`}
                 />
               </div>
@@ -106,7 +105,7 @@ const AdminLayout = () => {
               {/* Mobile Search Button */}
               <button 
                 onClick={() => setSearchOpen(!searchOpen)}
-                className={`md:hidden p-2.5 rounded-xl transition-colors ${
+                className={`md:hidden p-2.5 rounded-2xl transition-colors ${
                   darkMode ? 'hover:bg-dark-hover text-dark-text' : 'hover:bg-slate-100 text-slate-600'
                 }`}
               >
@@ -114,7 +113,7 @@ const AdminLayout = () => {
               </button>
 
               {/* Notifications */}
-              <button className={`relative p-2.5 rounded-xl transition-all duration-300 ${
+              <button className={`relative p-2.5 rounded-2xl transition-all duration-300 ${
                 darkMode 
                   ? 'hover:bg-dark-hover text-dark-text' 
                   : 'hover:bg-slate-100 text-slate-600'
@@ -126,20 +125,13 @@ const AdminLayout = () => {
               {/* Dark Mode Toggle */}
               <button 
                 onClick={toggleDarkMode}
-                className={`p-2.5 rounded-xl transition-all duration-300 ${
+                className={`p-2.5 rounded-2xl transition-all duration-300 ${
                   darkMode 
                     ? 'bg-brand-primary/20 text-brand-primary hover:bg-brand-primary/30' 
                     : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                 }`}
               >
                 {darkMode ? <LightModeIcon sx={{ fontSize: 22 }} /> : <DarkModeIcon sx={{ fontSize: 22 }} />}
-              </button>
-
-              {/* Settings */}
-              <button className={`hidden sm:flex p-2.5 rounded-xl transition-colors ${
-                darkMode ? 'hover:bg-dark-hover text-dark-text' : 'hover:bg-slate-100 text-slate-600'
-              }`}>
-                <SettingsIcon sx={{ fontSize: 22 }} />
               </button>
 
               {/* Divider */}
@@ -150,10 +142,10 @@ const AdminLayout = () => {
               {/* Back to Store */}
               <Link 
                 to="/" 
-                className={`hidden lg:flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 ${
+                className={`hidden lg:flex items-center gap-2 px-4 py-2 rounded-2xl text-sm font-medium transition-all duration-300 ${
                   darkMode 
                     ? 'text-dark-muted hover:text-dark-text hover:bg-dark-hover' 
-                    : 'text-slate-500 hover:text-slate-700 hover:bg-slate-100'
+                    : 'text-brand-slate hover:text-slate-700 hover:bg-slate-100'
                 }`}
               >
                 <ArrowBackIcon sx={{ fontSize: 18 }} /> 
@@ -163,7 +155,7 @@ const AdminLayout = () => {
               {/* Logout Button */}
               <button
                 onClick={handleLogout}
-                className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 ${
+                className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl text-sm font-semibold transition-all duration-300 ${
                   darkMode 
                     ? 'bg-red-500/20 text-red-400 hover:bg-red-500/30' 
                     : 'bg-red-50 text-red-600 hover:bg-red-100'
@@ -186,10 +178,10 @@ const AdminLayout = () => {
                   type="text"
                   placeholder="Search..."
                   autoFocus
-                  className={`w-full pl-12 pr-4 py-3 rounded-xl text-sm ${
+                  className={`w-full pl-12 pr-4 py-3 rounded-2xl text-sm ${
                     darkMode 
                       ? 'bg-dark-bg border-dark-border text-dark-text placeholder-dark-muted' 
-                      : 'bg-slate-50 border-slate-200 text-slate-800 placeholder-slate-400'
+                      : 'bg-slate-50 border-slate-200 text-brand-dark placeholder-slate-400'
                   } border outline-none focus:ring-2 focus:ring-brand-primary/20`}
                 />
               </div>
@@ -229,7 +221,7 @@ const AdminLayout = () => {
                       end={item.end}
                       onClick={() => setMobileMenuOpen(false)}
                       className={({ isActive }) =>
-                        `flex items-center gap-3 px-4 py-3 rounded-xl font-semibold transition-all duration-300 ${
+                        `flex items-center gap-3 px-4 py-3 rounded-2xl font-semibold transition-all duration-300 ${
                           isActive
                             ? "bg-gradient-to-r from-brand-primary to-brand-gold text-white shadow-lg shadow-brand-primary/30"
                             : darkMode 
@@ -255,7 +247,7 @@ const AdminLayout = () => {
                 <Link
                   to="/admin/products"
                   onClick={() => setMobileMenuOpen(false)}
-                  className={`flex items-center gap-3 px-4 py-3 rounded-xl font-semibold transition-all duration-300 ${
+                  className={`flex items-center gap-3 px-4 py-3 rounded-2xl font-semibold transition-all duration-300 ${
                     darkMode 
                       ? 'bg-brand-primary/20 text-brand-primary hover:bg-brand-primary/30' 
                       : 'bg-brand-primary/10 text-brand-gold hover:bg-brand-primary/20'
@@ -267,8 +259,8 @@ const AdminLayout = () => {
               </div>
 
               {/* Theme Info */}
-              <div className={`mt-6 p-4 rounded-xl ${
-                darkMode ? 'bg-dark-bg' : 'bg-slate-50'
+              <div className={`mt-6 p-4 rounded-2xl ${
+                darkMode ? 'bg-dark-bg' : 'bg-brand-cream'
               }`}>
                 <div className="flex items-center gap-3">
                   <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
@@ -306,3 +298,4 @@ const AdminLayout = () => {
 };
 
 export default AdminLayout;
+

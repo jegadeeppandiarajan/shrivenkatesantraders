@@ -4,15 +4,17 @@ import { Link, useNavigate } from "react-router-dom";
 import { fetchProducts } from "../../features/products/productSlice";
 import { addCartItem } from "../../features/cart/cartSlice";
 import { useTheme } from "../../context/ThemeContext";
+import AnimatedBackground from "../../components/common/AnimatedBackground";
 import { toast } from "react-toastify";
 import ImageIcon from '@mui/icons-material/Image';
 import StarIcon from '@mui/icons-material/Star';
 
 const categories = ["Pipes", "Motors", "Accessories", "Fittings", "Valves", "Pumps"];
-const IMAGE_BASE_URL = "http://localhost:5000";
+// Get base URL for images (strip /api suffix if present)
+const IMAGE_BASE_URL = (import.meta.env.VITE_API_URL || "http://localhost:5000/api").replace(/\/api\/?$/, "");
 
 const ProductSkeleton = ({ darkMode }) => (
-  <div className={`rounded-3xl border shadow-lg overflow-hidden ${darkMode ? 'bg-dark-card border-dark-border' : 'bg-white border-slate-100'}`}>
+  <div className={`rounded-3xl border shadow-lg overflow-hidden ${darkMode ? 'bg-dark-card border-dark-border' : 'bg-white border-brand-primary/10'}`}>
     <div className={`h-48 ${darkMode ? 'bg-dark-bg' : 'bg-slate-100'} animate-pulse`}></div>
     <div className="p-6 space-y-3">
       <div className={`h-4 w-20 rounded-full animate-pulse ${darkMode ? 'bg-dark-bg' : 'bg-slate-200'}`}></div>
@@ -83,32 +85,18 @@ const Products = () => {
   };
 
   return (
-    <section className={`min-h-screen ${darkMode ? 'bg-dark-bg' : 'bg-gradient-to-b from-slate-50 to-white'}`}>
-      {/* Hero Banner */}
-      <div className="bg-gradient-to-r from-brand-gold to-brand-primary py-16 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-0 left-0 w-96 h-96 bg-white rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
-          <div className="absolute bottom-0 right-0 w-96 h-96 bg-brand-secondary rounded-full blur-3xl translate-x-1/2 translate-y-1/2"></div>
-        </div>
-        <div className="max-w-7xl mx-auto px-4 relative z-10">
-          <div className="text-center animate-fade-in-up">
-            <p className="text-white/80 text-sm uppercase tracking-[0.5em] font-semibold">Industrial Supplies</p>
-            <h1 className="text-4xl md:text-5xl font-bold text-white mt-4">Product Catalog</h1>
-            <p className="text-white/70 mt-4 max-w-2xl mx-auto">
-              Browse our extensive collection of industrial pipes, motors, and accessories. Quality products for all your needs.
-            </p>
-          </div>
-        </div>
-      </div>
+    <section className={`min-h-screen relative transition-colors duration-700 ${darkMode ? 'bg-dark-bg' : 'bg-stone-100'}`}>
+      {/* Animated Background */}
+      <AnimatedBackground />
 
-      <div className="max-w-7xl mx-auto px-4 py-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
         {/* Filter Section */}
-        <div className={`rounded-3xl border p-6 shadow-xl -mt-8 relative z-20 mb-10 transition-all duration-700 ${
-          darkMode ? 'bg-dark-card border-dark-border' : 'bg-white border-slate-100'
+        <div className={`rounded-3xl border p-4 sm:p-6 shadow-xl relative z-20 mb-8 sm:mb-10 transition-all duration-700 ${
+          darkMode ? 'bg-dark-card border-dark-border' : 'bg-white border-brand-primary/10'
         } ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}>
-          <div className="flex flex-col md:flex-row gap-4">
+          <div className="flex flex-col gap-4">
             <div className="flex-1 relative">
-              <svg className={`absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 ${darkMode ? 'text-dark-muted' : 'text-slate-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className={`absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 ${darkMode ? 'text-dark-muted' : 'text-brand-slate'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
               <input
@@ -116,22 +104,22 @@ const Products = () => {
                 placeholder="Search pipes, motors, accessories..."
                 value={filters.search}
                 onChange={(e) => setFilters((prev) => ({ ...prev, search: e.target.value }))}
-                className={`w-full pl-12 pr-4 py-4 rounded-2xl border-2 outline-none transition-all text-lg ${
+                className={`w-full pl-10 sm:pl-12 pr-3 sm:pr-4 py-3 sm:py-4 rounded-full border-2 outline-none transition-all text-sm sm:text-base md:text-lg font-medium ${
                   darkMode 
-                    ? 'bg-dark-bg border-dark-border text-dark-text placeholder-dark-muted focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/20' 
-                    : 'border-slate-100 focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/10'
+                    ? 'bg-dark-bg border-dark-border text-dark-text placeholder-dark-muted focus:border-brand-accent focus:ring-4 focus:ring-brand-accent/20' 
+                    : 'bg-brand-light border-brand-primary/10 focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/10 placeholder-brand-slate/50'
                 }`}
               />
             </div>
             <div className="flex gap-2 flex-wrap">
               <button
                 onClick={() => setFilters((prev) => ({ ...prev, category: "" }))}
-                className={`px-5 py-3 rounded-xl font-semibold transition-all ${
+                className={`px-4 sm:px-5 py-2.5 sm:py-3 rounded-full text-xs sm:text-sm font-semibold transition-all duration-300 ${
                   !filters.category
-                    ? "bg-brand-primary text-white shadow-lg"
+                    ? "bg-brand-primary text-white shadow-lg shadow-brand-primary/30"
                     : darkMode 
                       ? 'bg-dark-bg text-dark-text hover:bg-dark-hover' 
-                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                      : 'bg-brand-light text-brand-slate hover:bg-brand-sky'
                 }`}
               >
                 All
@@ -140,12 +128,12 @@ const Products = () => {
                 <button
                   key={cat}
                   onClick={() => setFilters((prev) => ({ ...prev, category: cat }))}
-                  className={`px-5 py-3 rounded-xl font-semibold transition-all ${
+                  className={`px-4 sm:px-5 py-2.5 sm:py-3 rounded-full text-xs sm:text-sm font-semibold transition-all duration-300 ${
                     filters.category === cat
-                      ? "bg-brand-primary text-white shadow-lg"
+                      ? "bg-brand-primary text-white shadow-lg shadow-brand-primary/30"
                       : darkMode 
                         ? 'bg-dark-bg text-dark-text hover:bg-dark-hover' 
-                        : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                        : 'bg-brand-light text-brand-slate hover:bg-brand-sky'
                   }`}
                 >
                   {cat}
@@ -153,7 +141,7 @@ const Products = () => {
               ))}
             </div>
           </div>
-          <div className={`mt-4 flex items-center justify-between text-sm ${darkMode ? 'text-dark-muted' : 'text-slate-500'}`}>
+          <div className={`mt-3 sm:mt-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs sm:text-sm ${darkMode ? 'text-dark-muted' : 'text-brand-slate'}`}>
             <span className="flex items-center gap-2">
               <span className="w-2 h-2 bg-brand-accent rounded-full animate-pulse"></span>
               {items.length} products found
@@ -174,23 +162,23 @@ const Products = () => {
 
         {/* Products Grid */}
         {loading ? (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
             {[...Array(6)].map((_, i) => (
               <ProductSkeleton key={i} darkMode={darkMode} />
             ))}
           </div>
         ) : items.length > 0 ? (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
             {items.map((product, index) => (
               <Link
                 key={product._id}
                 to={`/products/${product._id}`}
-                className={`card-hover group rounded-3xl border shadow-lg overflow-hidden transition-all duration-500 ${
-                  darkMode ? 'bg-dark-card border-dark-border hover:border-brand-primary/50' : 'bg-white border-slate-100'
+                className={`card-hover group rounded-3xl border shadow-lg overflow-hidden transition-all duration-500 hover:-translate-y-2 ${
+                  darkMode ? 'bg-dark-card border-dark-border hover:border-brand-secondary/50' : 'bg-white border-brand-primary/10 hover:border-brand-primary/30'
                 } ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
                 style={{ transitionDelay: `${index * 100}ms` }}
               >
-                <div className={`h-48 flex items-center justify-center relative overflow-hidden ${darkMode ? 'bg-dark-bg' : 'bg-gradient-to-br from-slate-100 to-slate-50'}`}>
+                <div className={`h-48 flex items-center justify-center relative overflow-hidden ${darkMode ? 'bg-dark-bg' : 'bg-gradient-to-br from-brand-sky to-brand-light'}`}>
                   <div className="absolute inset-0 bg-gradient-to-br from-brand-primary/5 to-brand-secondary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                   {product.images && product.images.length > 0 ? (
                     <img
@@ -199,48 +187,48 @@ const Products = () => {
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
                   ) : (
-                    <ImageIcon sx={{ fontSize: 72 }} className={darkMode ? 'text-dark-muted' : 'text-slate-300'} />
+                    <ImageIcon sx={{ fontSize: 72 }} className={darkMode ? 'text-dark-muted' : 'text-brand-secondary/40'} />
                   )}
                   {product.featured && (
-                    <div className="absolute top-4 left-4 px-3 py-1 bg-brand-secondary text-white text-xs font-bold rounded-full flex items-center gap-1">
+                    <div className="absolute top-4 left-4 px-3 py-1 bg-brand-accent text-brand-dark text-xs font-semibold rounded-full flex items-center gap-1">
                       <StarIcon sx={{ fontSize: 12 }} />
                       Featured
                     </div>
                   )}
                   {product.stock < 10 && product.stock > 0 && (
-                    <div className="absolute top-4 right-4 px-3 py-1 bg-red-500 text-white text-xs font-bold rounded-full">
+                    <div className="absolute top-4 right-4 px-3 py-1 bg-red-500 text-white text-xs font-semibold rounded-full">
                       Low Stock
                     </div>
                   )}
                   {product.stock === 0 && (
-                    <div className="absolute top-4 right-4 px-3 py-1 bg-slate-700 text-white text-xs font-bold rounded-full">
+                    <div className="absolute top-4 right-4 px-3 py-1 bg-brand-dark text-white text-xs font-semibold rounded-full">
                       Out of Stock
                     </div>
                   )}
                   {product.ratings?.average > 0 && (
-                    <div className={`absolute bottom-4 left-4 px-2 py-1 backdrop-blur-sm text-xs font-semibold rounded-lg flex items-center gap-1 ${darkMode ? 'bg-dark-card/90 text-dark-text' : 'bg-white/90 text-slate-800'}`}>
-                      <StarIcon sx={{ fontSize: 14, color: '#f59e0b' }} />
+                    <div className={`absolute bottom-4 left-4 px-2 py-1 backdrop-blur-sm text-xs font-medium rounded-lg flex items-center gap-1 ${darkMode ? 'bg-dark-card/90 text-dark-text' : 'bg-white/90 text-brand-dark'}`}>
+                      <StarIcon sx={{ fontSize: 14 }} className="text-brand-accent" />
                       {product.ratings.average.toFixed(1)}
                     </div>
                   )}
                 </div>
                 <div className="p-6">
                   <div className="flex items-center gap-2 mb-3">
-                    <span className="px-3 py-1 bg-brand-primary/10 text-brand-primary text-xs font-semibold rounded-full">
+                    <span className="px-3 py-1 bg-brand-primary/10 text-brand-primary text-xs font-medium rounded-full">
                       {product.category}
                     </span>
                   </div>
-                  <h4 className={`text-xl font-bold group-hover:text-brand-primary transition-colors line-clamp-1 ${darkMode ? 'text-dark-text' : 'text-slate-900'}`}>
+                  <h4 className={`text-xl font-display font-bold group-hover:text-brand-primary transition-colors line-clamp-1 ${darkMode ? 'text-dark-text' : 'text-brand-dark'}`}>
                     {product.name}
                   </h4>
-                  <p className="text-2xl font-bold text-brand-primary mt-3">₹ {product.price.toLocaleString()}</p>
-                  <p className={`text-sm mt-3 line-clamp-2 ${darkMode ? 'text-dark-muted' : 'text-slate-500'}`}>{product.shortDescription || product.description}</p>
-                  <div className={`mt-5 pt-5 border-t ${darkMode ? 'border-dark-border' : 'border-slate-100'}`}>
+                  <p className="text-2xl font-display font-bold text-brand-primary mt-3">₹ {product.price.toLocaleString()}</p>
+                  <p className={`text-sm mt-3 line-clamp-2 font-display ${darkMode ? 'text-dark-muted' : 'text-brand-slate'}`}>{product.shortDescription || product.description}</p>
+                  <div className={`mt-5 pt-5 border-t ${darkMode ? 'border-dark-border' : 'border-brand-primary/10'}`}>
                     <div className="flex items-center justify-between mb-3">
-                      <span className={`text-sm font-semibold ${product.stock === 0 ? "text-red-500" : product.stock < 10 ? "text-red-500" : darkMode ? 'text-dark-muted' : 'text-slate-500'}`}>
+                      <span className={`text-sm font-medium ${product.stock === 0 ? "text-red-500" : product.stock < 10 ? "text-red-500" : darkMode ? 'text-dark-muted' : 'text-brand-slate'}`}>
                         {product.stock === 0 ? "Out of Stock" : product.stock < 10 ? `Only ${product.stock} left!` : `${product.stock} in stock`}
                       </span>
-                      <span className="text-brand-primary font-semibold text-sm flex items-center gap-1 group-hover:gap-2 transition-all">
+                      <span className="text-brand-primary font-medium text-sm flex items-center gap-1 group-hover:gap-2 transition-all">
                         Details
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -250,7 +238,7 @@ const Products = () => {
                     <button
                       onClick={(e) => handleAddToCart(e, product)}
                       disabled={addingToCart === product._id || product.stock === 0}
-                      className="w-full py-2.5 rounded-xl bg-brand-primary text-white font-semibold hover:bg-brand-gold transition-all disabled:bg-slate-300 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-sm"
+                      className="w-full py-3 rounded-full bg-brand-primary text-white font-semibold hover:bg-brand-secondary transition-all duration-300 disabled:bg-brand-secondary disabled:cursor-not-allowed flex items-center justify-center gap-2 text-sm"
                     >
                       {addingToCart === product._id ? (
                         <>
@@ -284,10 +272,10 @@ const Products = () => {
               </svg>
             </div>
             <h3 className={`text-2xl font-bold ${darkMode ? 'text-dark-text' : 'text-slate-700'}`}>No products found</h3>
-            <p className={`mt-2 ${darkMode ? 'text-dark-muted' : 'text-slate-500'}`}>Try adjusting your search or filter to find what you're looking for.</p>
+            <p className={`mt-2 ${darkMode ? 'text-dark-muted' : 'text-brand-slate'}`}>Try adjusting your search or filter to find what you're looking for.</p>
             <button
               onClick={() => setFilters({ search: "", category: "" })}
-              className="mt-6 px-6 py-3 bg-brand-primary text-white font-semibold rounded-xl hover:bg-brand-gold transition-colors"
+              className="mt-6 px-6 py-3 bg-brand-primary text-white font-semibold rounded-2xl hover:bg-brand-gold transition-colors"
             >
               Clear all filters
             </button>
@@ -299,3 +287,4 @@ const Products = () => {
 };
 
 export default Products;
+

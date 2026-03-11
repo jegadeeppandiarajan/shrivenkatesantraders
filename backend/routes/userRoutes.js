@@ -5,6 +5,7 @@ const {
   getOrderHistory,
   toggleWishlist,
   getWishlist,
+  getUserAnalytics,
 } = require("../controllers/userController");
 const { protect } = require("../middleware/auth");
 
@@ -17,5 +18,6 @@ router.put("/profile", updateProfile);
 router.get("/orders", getOrderHistory);
 router.get("/wishlist", getWishlist);
 router.post("/wishlist", toggleWishlist);
+router.get("/analytics", getUserAnalytics);
 
 module.exports = router;

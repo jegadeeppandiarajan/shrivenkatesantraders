@@ -25,14 +25,14 @@ const AdminLogin = () => {
     if (user && isAdmin) {
       navigate("/admin");
     } else if (user && !isAdmin) {
-      toast.error("Access denied. Admin privileges required.");
+      toast.error("Access denied. Admin privileges required.", { toastId: 'admin-access-denied' });
       navigate("/dashboard");
     }
   }, [user, isAdmin, navigate]);
 
   useEffect(() => {
     if (error) {
-      toast.error(error);
+      toast.error(error, { toastId: 'admin-login-error' });
       dispatch(clearError());
     }
   }, [error, dispatch]);
@@ -119,7 +119,7 @@ const AdminLogin = () => {
                 value={formData.email}
                 onChange={handleChange}
                 placeholder="admin@example.com"
-                className="w-full px-4 py-3 rounded-xl bg-white/10 border-2 border-white/20 focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/20 outline-none transition-all text-white placeholder-slate-500"
+                className="w-full px-4 py-3 rounded-2xl bg-white/10 border-2 border-white/20 focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/20 outline-none transition-all text-white placeholder-slate-500"
                 required
               />
             </div>
@@ -132,7 +132,7 @@ const AdminLogin = () => {
                   value={formData.password}
                   onChange={handleChange}
                   placeholder="Enter admin password"
-                  className="w-full px-4 py-3 rounded-xl bg-white/10 border-2 border-white/20 focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/20 outline-none transition-all text-white placeholder-slate-500 pr-12"
+                  className="w-full px-4 py-3 rounded-2xl bg-white/10 border-2 border-white/20 focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/20 outline-none transition-all text-white placeholder-slate-500 pr-12"
                   required
                 />
                 <button
@@ -148,7 +148,7 @@ const AdminLogin = () => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3.5 rounded-xl bg-gradient-to-r from-brand-primary to-brand-secondary text-white font-semibold hover:shadow-lg hover:shadow-brand-primary/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-brand-primary to-brand-secondary text-white font-semibold hover:shadow-lg hover:shadow-brand-primary/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               {loading ? (
                 <>
@@ -192,7 +192,7 @@ const AdminLogin = () => {
         </div>
 
         {/* Security Badge */}
-        <div className="mt-4 flex justify-center gap-6 text-slate-500">
+        <div className="mt-4 flex justify-center gap-6 text-brand-slate">
           <div className="flex items-center gap-2 text-xs">
             <svg className="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
@@ -212,3 +212,4 @@ const AdminLogin = () => {
 };
 
 export default AdminLogin;
+

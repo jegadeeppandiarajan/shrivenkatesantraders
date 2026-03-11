@@ -64,12 +64,38 @@ exports.getProductById = asyncHandler(async (req, res) => {
 });
 
 exports.createProduct = asyncHandler(async (req, res) => {
+  let allImages = [];
+
   if (req.files && req.files.length) {
-    req.body.images = req.files.map((file, index) => ({
+    allImages = req.files.map((file, index) => ({
       url: `/uploads/products/${file.filename}`,
       alt: req.body.name,
       isPrimary: index === 0,
     }));
+  }
+
+  // Handle URL-based images
+  if (req.body.imageUrls) {
+    try {
+      const urls = JSON.parse(req.body.imageUrls);
+      if (Array.isArray(urls)) {
+        const urlImages = urls.map((url, index) => ({
+          url,
+          alt: req.body.name,
+          isPrimary: allImages.length === 0 && index === 0,
+        }));
+        allImages = [...allImages, ...urlImages];
+      }
+    } catch (e) {
+      console.error("Error parsing imageUrls:", e);
+    }
+    delete req.body.imageUrls;
+  }
+
+  if (allImages.length > 0) {
+    // Ensure first image is primary
+    allImages = allImages.map((img, i) => ({ ...img, isPrimary: i === 0 }));
+    req.body.images = allImages;
   }
 
   if (req.body.specifications && typeof req.body.specifications === "string") {
@@ -99,6 +125,10 @@ exports.createProduct = asyncHandler(async (req, res) => {
 });
 
 exports.updateProduct = asyncHandler(async (req, res) => {
+  console.log("=== updateProduct called ===");
+  console.log("req.files:", req.files?.length || 0, "files");
+  console.log("req.body keys:", Object.keys(req.body));
+
   let product = await Product.findById(req.params.id);
 
   if (!product) {
@@ -107,24 +137,82 @@ exports.updateProduct = asyncHandler(async (req, res) => {
       .json({ success: false, message: "Product not found" });
   }
 
-  // Handle images
+  // Handle images - combine existing images with newly uploaded ones
+  let finalImages = [];
+
+  // Parse existing images from request (images to keep)
+  if (req.body.existingImages) {
+    try {
+      const existingImages = JSON.parse(req.body.existingImages);
+      console.log("Existing images to keep:", existingImages?.length || 0);
+      if (Array.isArray(existingImages)) {
+        finalImages = [...existingImages];
+      }
+    } catch (e) {
+      console.error("Error parsing existing images:", e);
+    }
+  }
+
+  // Add newly uploaded images
   if (req.files && req.files.length) {
-    req.body.images = req.files.map((file, index) => ({
+    console.log(
+      "New files uploaded:",
+      req.files.map((f) => f.filename),
+    );
+    const newImages = req.files.map((file, index) => ({
       url: `/uploads/products/${file.filename}`,
       alt: req.body.name || product.name,
+      isPrimary: finalImages.length === 0 && index === 0,
+    }));
+    finalImages = [...finalImages, ...newImages];
+  }
+
+  // Add URL-based images
+  if (req.body.imageUrls) {
+    try {
+      const urls = JSON.parse(req.body.imageUrls);
+      if (Array.isArray(urls)) {
+        const urlImages = urls.map((url, index) => ({
+          url,
+          alt: req.body.name || product.name,
+          isPrimary: finalImages.length === 0 && index === 0,
+        }));
+        finalImages = [...finalImages, ...urlImages];
+      }
+    } catch (e) {
+      console.error("Error parsing imageUrls:", e);
+    }
+    delete req.body.imageUrls;
+  }
+
+  console.log("Final images count:", finalImages.length);
+
+  // Set images if we have any (new or existing)
+  if (finalImages.length > 0) {
+    // Ensure first image is marked as primary
+    finalImages = finalImages.map((img, index) => ({
+      ...img,
       isPrimary: index === 0,
     }));
-  } else if (req.body.keepExistingImages === "true") {
-    // Keep existing images if no new ones uploaded
+    req.body.images = finalImages;
+  } else if (finalImages.length === 0 && !req.files?.length) {
+    // No images provided at all, keep existing product images
     delete req.body.images;
   }
 
-  // Clean up the keepExistingImages flag
+  // Clean up the existingImages field from body
+  delete req.body.existingImages;
   delete req.body.keepExistingImages;
 
   if (req.body.specifications && typeof req.body.specifications === "string") {
     req.body.specifications = JSON.parse(req.body.specifications);
   }
+
+  // Convert string values to proper types
+  if (req.body.price) req.body.price = Number(req.body.price);
+  if (req.body.stock) req.body.stock = Number(req.body.stock);
+  if (req.body.featured === "true") req.body.featured = true;
+  if (req.body.featured === "false") req.body.featured = false;
 
   product = await Product.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
@@ -182,7 +270,7 @@ exports.addReview = asyncHandler(async (req, res) => {
 
   // Check if user already reviewed this product
   const alreadyReviewed = product.reviews.find(
-    (review) => review.user.toString() === req.user._id.toString()
+    (review) => review.user.toString() === req.user._id.toString(),
   );
 
   if (alreadyReviewed) {
@@ -204,7 +292,7 @@ exports.addReview = asyncHandler(async (req, res) => {
   // Update ratings
   const totalRatings = product.reviews.reduce(
     (acc, item) => acc + item.rating,
-    0
+    0,
   );
   product.ratings.average = totalRatings / product.reviews.length;
   product.ratings.count = product.reviews.length;
@@ -253,7 +341,7 @@ exports.deleteReview = asyncHandler(async (req, res) => {
   }
 
   const reviewIndex = product.reviews.findIndex(
-    (review) => review._id.toString() === reviewId
+    (review) => review._id.toString() === reviewId,
   );
 
   if (reviewIndex === -1) {
@@ -279,7 +367,7 @@ exports.deleteReview = asyncHandler(async (req, res) => {
   if (product.reviews.length > 0) {
     const totalRatings = product.reviews.reduce(
       (acc, item) => acc + item.rating,
-      0
+      0,
     );
     product.ratings.average = totalRatings / product.reviews.length;
     product.ratings.count = product.reviews.length;

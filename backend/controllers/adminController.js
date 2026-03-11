@@ -23,50 +23,121 @@ const buildSalesPipeline = (start) => [
 ];
 
 exports.getDashboardAnalytics = asyncHandler(async (req, res) => {
-  const { start: last30Days } = getDateRange(30);
+  const days = parseInt(req.query.days) || 30;
+  const { start: revenueStart } = getDateRange(days);
   const { start: last7Days } = getDateRange(7);
+  const { start: lastMonth } = getDateRange(60);
 
-  const [totals, revenueSeries, bestSellers, lowStock, paymentsToday] =
-    await Promise.all([
-      Promise.all([
-        Order.countDocuments(),
-        Order.aggregate([
-          { $match: { paymentStatus: "paid" } },
-          { $group: { _id: null, total: { $sum: "$totalAmount" } } },
-        ]),
-        Product.countDocuments({ isActive: true }),
-        User.countDocuments(),
-      ]),
-      Order.aggregate(buildSalesPipeline(last30Days)),
+  const [
+    totals,
+    revenueSeries,
+    bestSellers,
+    lowStock,
+    paymentsToday,
+    orderStats,
+    recentOrders,
+    topCustomers,
+  ] = await Promise.all([
+    Promise.all([
+      Order.countDocuments(),
       Order.aggregate([
-        { $unwind: "$items" },
-        {
-          $group: {
-            _id: "$items.product",
-            name: { $first: "$items.name" },
-            quantity: { $sum: "$items.quantity" },
-            revenue: {
-              $sum: { $multiply: ["$items.quantity", "$items.price"] },
-            },
+        { $match: { paymentStatus: "paid" } },
+        { $group: { _id: null, total: { $sum: "$totalAmount" } } },
+      ]),
+      Product.countDocuments({ isActive: true }),
+      User.countDocuments(),
+    ]),
+    Order.aggregate(buildSalesPipeline(revenueStart)),
+    Order.aggregate([
+      { $unwind: "$items" },
+      {
+        $group: {
+          _id: "$items.product",
+          name: { $first: "$items.name" },
+          quantity: { $sum: "$items.quantity" },
+          revenue: {
+            $sum: { $multiply: ["$items.quantity", "$items.price"] },
           },
         },
-        { $sort: { quantity: -1 } },
-        { $limit: 5 },
-      ]),
-      Product.getLowStockProducts(),
-      Payment.aggregate([
-        { $match: { createdAt: { $gte: last7Days } } },
-        {
-          $group: {
-            _id: "$status",
-            total: { $sum: 1 },
-            amount: { $sum: "$amount" },
-          },
+      },
+      { $sort: { quantity: -1 } },
+      { $limit: 5 },
+    ]),
+    Product.getLowStockProducts(),
+    Payment.aggregate([
+      { $match: { createdAt: { $gte: last7Days } } },
+      {
+        $group: {
+          _id: "$status",
+          total: { $sum: 1 },
+          amount: { $sum: "$amount" },
         },
-      ]),
-    ]);
+      },
+    ]),
+    // Order status breakdown
+    Order.aggregate([
+      {
+        $group: {
+          _id: "$orderStatus",
+          count: { $sum: 1 },
+        },
+      },
+    ]),
+    // Recent orders
+    Order.find()
+      .sort("-createdAt")
+      .limit(5)
+      .populate("user", "name email")
+      .select("orderNumber totalAmount orderStatus paymentStatus createdAt"),
+    // Top customers by spending
+    Order.aggregate([
+      { $match: { paymentStatus: "paid" } },
+      {
+        $group: {
+          _id: "$user",
+          totalSpent: { $sum: "$totalAmount" },
+          orderCount: { $sum: 1 },
+        },
+      },
+      { $sort: { totalSpent: -1 } },
+      { $limit: 5 },
+      {
+        $lookup: {
+          from: "users",
+          localField: "_id",
+          foreignField: "_id",
+          as: "userInfo",
+        },
+      },
+      { $unwind: "$userInfo" },
+      {
+        $project: {
+          _id: 1,
+          name: "$userInfo.name",
+          email: "$userInfo.email",
+          totalSpent: 1,
+          orderCount: 1,
+        },
+      },
+    ]),
+  ]);
 
   const [[ordersCount, revenueAgg, productsCount, customersCount]] = [totals];
+
+  // Calculate order status counts
+  const orderStatusCounts = {
+    pending: 0,
+    confirmed: 0,
+    processing: 0,
+    shipped: 0,
+    delivered: 0,
+    cancelled: 0,
+  };
+  orderStats.forEach((stat) => {
+    if (orderStatusCounts.hasOwnProperty(stat._id)) {
+      orderStatusCounts[stat._id] = stat.count;
+    }
+  });
 
   res.status(200).json({
     success: true,
@@ -76,10 +147,13 @@ exports.getDashboardAnalytics = asyncHandler(async (req, res) => {
       totalProducts: productsCount,
       totalCustomers: customersCount,
     },
+    orderStatusCounts,
     revenueSeries,
     bestSellers,
     lowStock,
     paymentsSummary: paymentsToday,
+    recentOrders,
+    topCustomers,
   });
 });
 
@@ -121,7 +195,7 @@ exports.updateUserRole = asyncHandler(async (req, res) => {
   const user = await User.findByIdAndUpdate(
     userId,
     { role },
-    { new: true }
+    { new: true },
   ).select("name email role isActive");
 
   if (!user) {
@@ -139,7 +213,7 @@ exports.updateUserStatus = asyncHandler(async (req, res) => {
   const user = await User.findByIdAndUpdate(
     userId,
     { isActive },
-    { new: true }
+    { new: true },
   ).select("name email role isActive");
 
   if (!user) {

@@ -52,7 +52,7 @@ const ManagePayments = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div className="flex items-center gap-3">
-          <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
+          <div className={`w-10 h-10 rounded-2xl flex items-center justify-center ${
             darkMode ? 'bg-brand-primary/20' : 'bg-brand-primary/10'
           }`}>
             <PaymentIcon className="text-brand-primary" />
@@ -62,13 +62,13 @@ const ManagePayments = () => {
               darkMode ? 'text-dark-text' : 'text-slate-900'
             }`}>Payment Transactions</h2>
             <p className={`text-sm ${
-              darkMode ? 'text-dark-muted' : 'text-slate-500'
+              darkMode ? 'text-dark-muted' : 'text-brand-slate'
             }`}>Latest Stripe payment records</p>
           </div>
         </div>
         <button 
           onClick={() => dispatch(fetchPayments())}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${
+          className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl text-sm font-medium transition-all ${
             darkMode 
               ? 'bg-dark-hover text-dark-text hover:bg-dark-border' 
               : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
@@ -80,14 +80,14 @@ const ManagePayments = () => {
       </div>
 
       {/* Table */}
-      <div className={`rounded-xl border overflow-hidden ${
+      <div className={`rounded-2xl border overflow-hidden ${
         darkMode ? 'border-dark-border' : 'border-slate-200'
       }`}>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className={`text-left text-xs uppercase tracking-wider ${
-                darkMode ? 'bg-dark-bg text-dark-muted' : 'bg-slate-50 text-slate-500'
+                darkMode ? 'bg-dark-bg text-dark-muted' : 'bg-slate-50 text-brand-slate'
               }`}>
                 <th className="px-4 lg:px-6 py-4 font-semibold">Order</th>
                 <th className="px-4 lg:px-6 py-4 font-semibold">Customer</th>
@@ -127,7 +127,7 @@ const ManagePayments = () => {
                     </span>
                   </td>
                   <td className={`px-4 lg:px-6 py-4 text-xs ${
-                    darkMode ? 'text-dark-muted' : 'text-slate-500'
+                    darkMode ? 'text-dark-muted' : 'text-brand-slate'
                   }`}>
                     {new Date(payment.updatedAt).toLocaleString()}
                   </td>
@@ -139,7 +139,7 @@ const ManagePayments = () => {
         
         {!payments.length && (
           <div className={`text-center py-12 ${
-            darkMode ? 'text-dark-muted' : 'text-slate-500'
+            darkMode ? 'text-dark-muted' : 'text-brand-slate'
           }`}>
             <PaymentIcon sx={{ fontSize: 48 }} className="opacity-30 mb-3" />
             <p className="font-medium">No payment records found</p>
@@ -150,9 +150,9 @@ const ManagePayments = () => {
 
       {/* Summary Cards */}
       {payments.length > 0 && (
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
-          <div className={`p-4 rounded-xl ${
-            darkMode ? 'bg-dark-bg border border-dark-border' : 'bg-slate-50'
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mt-6">
+          <div className={`p-4 rounded-2xl ${
+            darkMode ? 'bg-dark-bg border border-dark-border' : 'bg-brand-cream'
           }`}>
             <p className={`text-xs uppercase tracking-wider font-semibold ${
               darkMode ? 'text-dark-muted' : 'text-slate-400'
@@ -161,8 +161,8 @@ const ManagePayments = () => {
               darkMode ? 'text-dark-text' : 'text-slate-900'
             }`}>{payments.length}</p>
           </div>
-          <div className={`p-4 rounded-xl ${
-            darkMode ? 'bg-dark-bg border border-dark-border' : 'bg-slate-50'
+          <div className={`p-4 rounded-2xl ${
+            darkMode ? 'bg-dark-bg border border-dark-border' : 'bg-brand-cream'
           }`}>
             <p className={`text-xs uppercase tracking-wider font-semibold ${
               darkMode ? 'text-dark-muted' : 'text-slate-400'
@@ -171,8 +171,8 @@ const ManagePayments = () => {
               darkMode ? 'text-brand-primary' : 'text-brand-gold'
             }`}>₹ {payments.reduce((sum, p) => sum + (p.amount || 0), 0).toLocaleString()}</p>
           </div>
-          <div className={`p-4 rounded-xl ${
-            darkMode ? 'bg-dark-bg border border-dark-border' : 'bg-slate-50'
+          <div className={`p-4 rounded-2xl ${
+            darkMode ? 'bg-dark-bg border border-dark-border' : 'bg-brand-cream'
           }`}>
             <p className={`text-xs uppercase tracking-wider font-semibold ${
               darkMode ? 'text-dark-muted' : 'text-slate-400'
@@ -181,8 +181,8 @@ const ManagePayments = () => {
               {payments.filter(p => ['completed', 'succeeded'].includes(p.status?.toLowerCase())).length}
             </p>
           </div>
-          <div className={`p-4 rounded-xl ${
-            darkMode ? 'bg-dark-bg border border-dark-border' : 'bg-slate-50'
+          <div className={`p-4 rounded-2xl ${
+            darkMode ? 'bg-dark-bg border border-dark-border' : 'bg-brand-cream'
           }`}>
             <p className={`text-xs uppercase tracking-wider font-semibold ${
               darkMode ? 'text-dark-muted' : 'text-slate-400'
@@ -198,3 +198,4 @@ const ManagePayments = () => {
 };
 
 export default ManagePayments;
+

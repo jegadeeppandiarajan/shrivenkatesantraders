@@ -32,7 +32,7 @@ class ErrorBoundary extends React.Component {
                         </div>
                         {this.state.errorInfo && (
                             <div className="bg-slate-100 border border-slate-300 rounded-lg p-4 mb-4">
-                                <p className="font-semibold text-slate-800 mb-2">Component Stack:</p>
+                                <p className="font-semibold text-brand-dark mb-2">Component Stack:</p>
                                 <pre className="text-xs text-slate-600 whitespace-pre-wrap overflow-auto max-h-64">
                                     {this.state.errorInfo.componentStack}
                                 </pre>
@@ -54,3 +54,4 @@ class ErrorBoundary extends React.Component {
 }
 
 export default ErrorBoundary;
+

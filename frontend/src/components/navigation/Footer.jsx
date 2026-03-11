@@ -16,6 +16,7 @@ import SupportAgentIcon from '@mui/icons-material/SupportAgent';
 import PaymentsIcon from '@mui/icons-material/Payments';
 import LightModeIcon from '@mui/icons-material/LightMode';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
+import MarkEmailUnreadIcon from '@mui/icons-material/MarkEmailUnread';
 
 const Footer = () => {
   const [email, setEmail] = useState("");
@@ -69,27 +70,26 @@ const Footer = () => {
   ];
 
   return (
-    <footer className="bg-gradient-to-br from-amber-950 via-brand-dark to-amber-950 dark:from-dark-bg dark:via-dark-card dark:to-dark-bg text-white relative overflow-hidden">
-      {/* Animated decorative elements */}
-      <div className="absolute top-0 left-0 w-72 h-72 bg-brand-primary/10 dark:bg-brand-secondary/10 rounded-full blur-3xl animate-float"></div>
-      <div className="absolute bottom-0 right-0 w-96 h-96 bg-brand-secondary/10 dark:bg-brand-primary/10 rounded-full blur-3xl animate-float-delayed"></div>
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] border border-brand-primary/5 dark:border-brand-secondary/5 rounded-full animate-spin-slow"></div>
-      
-      {/* Animated top border */}
-      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-brand-primary via-brand-secondary to-brand-honey dark:from-brand-secondary dark:via-brand-honey dark:to-brand-primary animate-gradient-x bg-[length:200%_100%]"></div>
-      
+    <footer className="bg-brand-dark dark:bg-dark-bg text-white relative overflow-hidden transition-colors duration-500">
+      {/* Subtle accent glow */}
+      <div className="absolute top-0 left-0 w-[400px] h-[400px] bg-brand-primary/5 dark:bg-brand-primary/3 rounded-full blur-[150px]"></div>
+      <div className="absolute bottom-0 right-0 w-[300px] h-[300px] bg-brand-secondary/5 dark:bg-brand-primary/3 rounded-full blur-[120px]"></div>
+
+      {/* Top accent line */}
+      <div className="absolute top-0 left-0 right-0 h-1 bg-brand-primary"></div>
+
       {/* Features Bar */}
-      <div className="border-b border-brand-primary/20 dark:border-brand-secondary/20 relative">
+      <div className="border-b border-white/10 dark:border-dark-border relative">
         <div className="max-w-7xl mx-auto px-4 py-6 sm:py-8">
           <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             {features.map((feature, index) => (
-              <div key={index} className="group flex items-center gap-3 sm:gap-4 p-4 sm:p-5 bg-white/5 dark:bg-dark-card/50 hover:bg-gradient-to-r hover:from-brand-primary/20 hover:to-brand-gold/20 dark:hover:from-brand-secondary/20 dark:hover:to-brand-honey/20 rounded-2xl backdrop-blur-sm transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-brand-primary/20 dark:hover:shadow-brand-secondary/30 border border-brand-primary/10 dark:border-brand-secondary/20">
-                <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-brand-primary via-brand-gold to-brand-honey dark:from-brand-secondary dark:via-brand-honey dark:to-brand-primary rounded-2xl flex items-center justify-center text-white dark:text-dark-bg flex-shrink-0 shadow-lg shadow-brand-primary/30 dark:shadow-brand-secondary/40 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
+              <div key={index} className="group flex items-center gap-3 sm:gap-4 p-4 sm:p-5 bg-white/5 dark:bg-dark-card hover:bg-white/10 dark:hover:bg-dark-hover border border-white/10 dark:border-dark-border transition-all duration-300 hover:-translate-y-1">
+                <div className="w-12 h-12 sm:w-14 sm:h-14 bg-brand-primary flex items-center justify-center text-white flex-shrink-0 group-hover:scale-105 transition-all duration-300">
                   {feature.icon}
                 </div>
                 <div>
-                  <h4 className="font-extrabold text-white text-sm sm:text-base group-hover:text-brand-secondary dark:group-hover:text-brand-honey transition-colors">{feature.title}</h4>
-                  <p className="text-amber-200/70 dark:text-dark-muted text-xs sm:text-sm">{feature.desc}</p>
+                  <h4 className="font-bold text-white text-sm sm:text-base group-hover:text-brand-primary transition-colors">{feature.title}</h4>
+                  <p className="text-white/60 dark:text-dark-muted text-xs sm:text-sm">{feature.desc}</p>
                 </div>
               </div>
             ))}
@@ -103,57 +103,55 @@ const Footer = () => {
           {/* Brand Section */}
           <div className="lg:col-span-2">
             <Link to="/" className="flex items-center gap-3 mb-6 group">
-              <div className="h-12 w-12 sm:h-14 sm:w-14 rounded-2xl bg-gradient-to-br from-brand-primary via-brand-gold to-brand-honey dark:from-brand-secondary dark:via-brand-honey dark:to-brand-primary text-white dark:text-dark-bg flex items-center justify-center font-extrabold text-xl sm:text-2xl shadow-xl group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 shadow-brand-primary/40 dark:shadow-brand-secondary/50">
-                SV
-              </div>
-              <div>
-                <p className="text-[10px] uppercase tracking-[0.3em] text-brand-secondary dark:text-brand-honey font-extrabold">Est. 1998</p>
-                <h3 className="text-base sm:text-lg font-extrabold leading-tight bg-gradient-to-r from-white via-brand-secondary to-brand-accent dark:from-brand-secondary dark:via-brand-honey dark:to-white bg-clip-text text-transparent">Shri Venkatesan Traders</h3>
-              </div>
+              <img 
+                src="/logo.svg" 
+                alt="Shri Venkatesan Traders" 
+                className="h-12 sm:h-14 w-auto object-contain group-hover:scale-105 transition-transform duration-300"
+              />
             </Link>
-            <p className="text-amber-100/70 dark:text-dark-muted mb-6 leading-relaxed text-sm max-w-sm">
+            <p className="text-white/70 dark:text-dark-muted mb-6 leading-relaxed text-sm max-w-sm">
               Your trusted partner for premium industrial supplies. Serving South India's manufacturing sector with quality products for over 25 years.
             </p>
-            
+
             {/* Contact Info */}
             <div className="space-y-3 mb-6">
-              <a href="mailto:info@svtraders.com" className="flex items-center gap-3 text-amber-100/70 dark:text-dark-muted hover:text-brand-secondary dark:hover:text-brand-honey transition-all text-sm group">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-primary/20 to-brand-gold/20 dark:from-brand-secondary/20 dark:to-brand-honey/20 flex items-center justify-center group-hover:bg-brand-primary/30 dark:group-hover:bg-brand-secondary/30 transition-all border border-brand-primary/20 dark:border-brand-secondary/30">
-                  <EmailIcon sx={{ fontSize: 18 }} className="text-brand-secondary dark:text-brand-honey" />
+              <a href="mailto:info@svtraders.com" className="flex items-center gap-3 text-white/70 dark:text-dark-muted hover:text-brand-primary transition-all text-sm group">
+                <div className="w-10 h-10 bg-white/10 dark:bg-dark-card flex items-center justify-center group-hover:bg-brand-primary/20 transition-all border border-white/10 dark:border-dark-border">
+                  <EmailIcon sx={{ fontSize: 18 }} className="text-brand-primary" />
                 </div>
-                <span className="group-hover:translate-x-1 transition-transform">info@svtraders.com</span>
+                <span className="group-hover:translate-x-1 transition-transform font-medium">info@svtraders.com</span>
               </a>
-              <a href="tel:+919876543210" className="flex items-center gap-3 text-amber-100/70 dark:text-dark-muted hover:text-brand-secondary dark:hover:text-brand-honey transition-all text-sm group">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-primary/20 to-brand-gold/20 dark:from-brand-secondary/20 dark:to-brand-honey/20 flex items-center justify-center group-hover:bg-brand-primary/30 dark:group-hover:bg-brand-secondary/30 transition-all border border-brand-primary/20 dark:border-brand-secondary/30">
-                  <PhoneIcon sx={{ fontSize: 18 }} className="text-brand-secondary dark:text-brand-honey" />
+              <a href="tel:+919876543210" className="flex items-center gap-3 text-white/70 dark:text-dark-muted hover:text-brand-primary transition-all text-sm group">
+                <div className="w-10 h-10 bg-white/10 dark:bg-dark-card flex items-center justify-center group-hover:bg-brand-primary/20 transition-all border border-white/10 dark:border-dark-border">
+                  <PhoneIcon sx={{ fontSize: 18 }} className="text-brand-primary" />
                 </div>
-                <span className="group-hover:translate-x-1 transition-transform">+91 98765 43210</span>
+                <span className="group-hover:translate-x-1 transition-transform font-medium">+91 98765 43210</span>
               </a>
-              <div className="flex items-start gap-3 text-amber-100/70 dark:text-dark-muted text-sm group">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-primary/20 to-brand-gold/20 dark:from-brand-secondary/20 dark:to-brand-honey/20 flex items-center justify-center flex-shrink-0 mt-0.5 border border-brand-primary/20 dark:border-brand-secondary/30">
-                  <LocationOnIcon sx={{ fontSize: 18 }} className="text-brand-secondary dark:text-brand-honey" />
+              <div className="flex items-start gap-3 text-white/70 dark:text-dark-muted text-sm group">
+                <div className="w-10 h-10 bg-white/10 dark:bg-dark-card flex items-center justify-center flex-shrink-0 mt-0.5 border border-white/10 dark:border-dark-border">
+                  <LocationOnIcon sx={{ fontSize: 18 }} className="text-brand-primary" />
                 </div>
-                <span>123 Industrial Area, Chennai, Tamil Nadu 600001</span>
+                <span className="font-medium">123 Industrial Area, Chennai, Tamil Nadu 600001</span>
               </div>
             </div>
-            
+
             {/* Social Icons */}
             <div className="flex flex-wrap gap-2">
               {[
-                { icon: FacebookIcon, label: "Facebook", color: "from-blue-600 to-blue-500", hoverShadow: "hover:shadow-blue-500/50" },
-                { icon: LinkedInIcon, label: "LinkedIn", color: "from-blue-700 to-blue-600", hoverShadow: "hover:shadow-blue-600/50" },
-                { icon: TwitterIcon, label: "Twitter", color: "from-sky-500 to-blue-500", hoverShadow: "hover:shadow-sky-500/50" },
-                { icon: InstagramIcon, label: "Instagram", color: "from-pink-600 to-purple-600", hoverShadow: "hover:shadow-pink-500/50" },
-                { icon: YouTubeIcon, label: "YouTube", color: "from-red-600 to-red-500", hoverShadow: "hover:shadow-red-500/50" },
+                { icon: FacebookIcon, label: "Facebook", color: "hover:bg-blue-600" },
+                { icon: LinkedInIcon, label: "LinkedIn", color: "hover:bg-blue-700" },
+                { icon: TwitterIcon, label: "Twitter", color: "hover:bg-sky-500" },
+                { icon: InstagramIcon, label: "Instagram", color: "hover:bg-pink-600" },
+                { icon: YouTubeIcon, label: "YouTube", color: "hover:bg-red-600" },
               ].map((social) => {
                 const IconComponent = social.icon;
                 return (
                   <button
                     key={social.label}
-                    className={`w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-white/10 dark:bg-dark-hover hover:bg-gradient-to-r ${social.color} text-white flex items-center justify-center transition-all duration-300 hover:scale-110 hover:rotate-6 group border border-white/10 hover:border-transparent shadow-lg ${social.hoverShadow}`}
+                    className={`w-10 h-10 sm:w-11 sm:h-11 bg-white/10 dark:bg-dark-card ${social.color} text-white flex items-center justify-center transition-all duration-300 hover:scale-105 group border border-white/10 dark:border-dark-border hover:border-transparent`}
                     title={social.label}
                   >
-                    <IconComponent sx={{ fontSize: 20 }} className="group-hover:scale-110 transition-transform" />
+                    <IconComponent sx={{ fontSize: 18 }} className="group-hover:scale-110 transition-transform" />
                   </button>
                 );
               })}
@@ -163,8 +161,8 @@ const Footer = () => {
           {/* Links Sections */}
           {footerLinks.map((section) => (
             <div key={section.title} className="sm:pl-4">
-              <h4 className="font-extrabold text-white mb-4 sm:mb-5 text-sm sm:text-base flex items-center gap-2">
-                <span className="w-1.5 h-6 bg-gradient-to-b from-brand-primary via-brand-gold to-brand-honey dark:from-brand-secondary dark:via-brand-honey dark:to-brand-primary rounded-full"></span>
+              <h4 className="font-bold text-white mb-4 sm:mb-5 text-sm sm:text-base flex items-center gap-2">
+                <span className="w-1 h-5 bg-brand-primary"></span>
                 {section.title}
               </h4>
               <ul className="space-y-2.5 sm:space-y-3">
@@ -172,10 +170,10 @@ const Footer = () => {
                   <li key={link.name}>
                     <Link
                       to={link.href}
-                      className="text-amber-100/70 dark:text-dark-muted hover:text-brand-secondary dark:hover:text-brand-honey transition-all text-sm hover:translate-x-2 inline-flex items-center gap-2 group"
+                      className="text-white/70 dark:text-dark-muted hover:text-brand-primary transition-all text-sm hover:translate-x-1 inline-flex items-center gap-2 group font-medium"
                     >
-                      <span className="w-0 group-hover:w-2 h-0.5 bg-brand-secondary dark:bg-brand-honey rounded-full transition-all duration-300"></span>
-                      <span className="group-hover:underline decoration-brand-secondary dark:decoration-brand-honey decoration-2 underline-offset-4">{link.name}</span>
+                      <span className="w-0 group-hover:w-2 h-0.5 bg-brand-primary transition-all duration-300"></span>
+                      <span>{link.name}</span>
                     </Link>
                   </li>
                 ))}
@@ -185,53 +183,53 @@ const Footer = () => {
         </div>
 
         {/* Newsletter */}
-        <div className="mt-12 sm:mt-16 pt-8 sm:pt-10 border-t border-brand-primary/20 dark:border-brand-secondary/20">
+        <div className="mt-12 sm:mt-16 pt-8 sm:pt-10 border-t border-white/10 dark:border-dark-border">
           <div className="grid lg:grid-cols-2 gap-8 items-center">
             <div className="max-w-xl">
-              <h4 className="font-extrabold text-white mb-2 text-base sm:text-lg flex items-center gap-2">
-                <span className="text-2xl animate-bounce">📬</span> Subscribe to our newsletter
+              <h4 className="font-display font-bold text-white dark:text-white mb-2 text-base sm:text-lg flex items-center gap-2">
+                <MarkEmailUnreadIcon className="text-brand-primary" sx={{ fontSize: 28 }} /> Subscribe to our newsletter
               </h4>
-              <p className="text-amber-100/70 dark:text-dark-muted text-sm mb-4">Get updates on new products and exclusive offers.</p>
+              <p className="text-gray-300 dark:text-dark-muted text-sm mb-4 font-display">Get updates on new products and exclusive offers.</p>
               <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-3">
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Enter your email"
-                  className="flex-1 px-4 py-3.5 rounded-xl bg-white/10 dark:bg-dark-hover border-2 border-brand-primary/30 dark:border-brand-secondary/30 text-white placeholder-amber-200/50 dark:placeholder-dark-muted focus:outline-none focus:border-brand-primary dark:focus:border-brand-secondary focus:bg-white/15 dark:focus:bg-dark-card transition-all text-sm backdrop-blur-sm"
+                  className="flex-1 px-4 py-3.5 bg-white/10 dark:bg-dark-hover border border-white/20 dark:border-dark-border text-white placeholder-gray-400 dark:placeholder-dark-muted focus:outline-none focus:border-brand-primary transition-all text-sm"
                   required
                 />
                 <button
                   type="submit"
-                  className="px-6 py-3.5 bg-gradient-to-r from-brand-primary via-brand-gold to-brand-honey dark:from-brand-secondary dark:via-brand-honey dark:to-brand-primary text-white dark:text-dark-bg rounded-xl font-extrabold hover:shadow-xl hover:shadow-brand-primary/40 dark:hover:shadow-brand-secondary/50 transition-all flex items-center justify-center gap-2 text-sm hover:scale-105 group"
+                  className="px-6 py-3.5 bg-brand-primary hover:bg-brand-secondary text-white font-semibold transition-all flex items-center justify-center gap-2 text-sm group"
                 >
                   <SendIcon sx={{ fontSize: 18 }} className="group-hover:translate-x-1 transition-transform" />
                   <span>Subscribe</span>
                 </button>
               </form>
               {subscribeStatus === "success" && (
-                <p className="mt-3 text-brand-secondary dark:text-brand-honey text-sm flex items-center gap-2 font-bold animate-pulse">
+                <p className="mt-3 text-brand-primary text-sm flex items-center gap-2 font-semibold">
                   <VerifiedIcon sx={{ fontSize: 18 }} />
-                  Thanks for subscribing! 🎉
+                  Thanks for subscribing!
                 </p>
               )}
             </div>
-            
+
             {/* Dark Mode Toggle in Footer */}
             <div className="flex justify-center lg:justify-end">
               <button
                 onClick={toggleDarkMode}
-                className="flex items-center gap-3 px-6 py-3 rounded-2xl bg-white/10 dark:bg-dark-hover hover:bg-white/20 dark:hover:bg-dark-card border border-brand-primary/30 dark:border-brand-secondary/30 transition-all duration-300 group hover:scale-105 hover:shadow-lg hover:shadow-brand-primary/30 dark:hover:shadow-brand-secondary/40"
+                className="flex items-center gap-3 px-6 py-3 bg-white/10 dark:bg-dark-hover hover:bg-white/20 dark:hover:bg-dark-card border border-white/20 dark:border-dark-border transition-all duration-300 group"
               >
                 {darkMode ? (
                   <>
-                    <LightModeIcon sx={{ fontSize: 24 }} className="text-brand-secondary dark:text-brand-honey group-hover:rotate-180 transition-transform duration-500" />
-                    <span className="text-white font-bold text-sm">Light Mode</span>
+                    <LightModeIcon sx={{ fontSize: 24 }} className="text-brand-primary transition-transform duration-300" />
+                    <span className="text-white font-semibold text-sm">Light Mode</span>
                   </>
                 ) : (
                   <>
-                    <DarkModeIcon sx={{ fontSize: 24 }} className="text-brand-secondary group-hover:-rotate-12 transition-transform duration-300" />
-                    <span className="text-white font-bold text-sm">Dark Mode</span>
+                    <DarkModeIcon sx={{ fontSize: 24 }} className="text-brand-primary transition-transform duration-300" />
+                    <span className="text-white font-semibold text-sm">Dark Mode</span>
                   </>
                 )}
               </button>
@@ -241,18 +239,18 @@ const Footer = () => {
       </div>
 
       {/* Bottom Bar */}
-      <div className="border-t border-brand-primary/20 dark:border-brand-secondary/20 bg-black/30 dark:bg-black/50 backdrop-blur-sm">
+      <div className="border-t border-white/10 dark:border-dark-border bg-black/20 dark:bg-black/30">
         <div className="max-w-7xl mx-auto px-4 py-5 sm:py-6">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 text-center sm:text-left">
-            <p className="text-amber-200/60 dark:text-dark-muted text-xs sm:text-sm">
+            <p className="text-white/60 dark:text-dark-muted text-xs sm:text-sm">
               © {new Date().getFullYear()} <span className="font-bold text-white">Shri Venkatesan Traders</span>. All rights reserved.
             </p>
-            <div className="flex items-center justify-center flex-wrap gap-4 sm:gap-6 text-amber-200/60 dark:text-dark-muted text-xs sm:text-sm">
-              <Link to="/" className="hover:text-brand-secondary dark:hover:text-brand-honey transition-colors font-medium hover:underline underline-offset-4">Privacy</Link>
-              <span className="text-brand-primary/30 dark:text-brand-secondary/30">•</span>
-              <Link to="/" className="hover:text-brand-secondary dark:hover:text-brand-honey transition-colors font-medium hover:underline underline-offset-4">Terms</Link>
-              <span className="text-brand-primary/30 dark:text-brand-secondary/30">•</span>
-              <Link to="/" className="hover:text-brand-secondary dark:hover:text-brand-honey transition-colors font-medium hover:underline underline-offset-4">Cookies</Link>
+            <div className="flex items-center justify-center flex-wrap gap-4 sm:gap-6 text-gray-400 dark:text-dark-muted text-xs sm:text-sm">
+              <Link to="/" className="hover:text-brand-primary transition-colors font-medium">Privacy</Link>
+              <span className="text-white/20">|</span>
+              <Link to="/" className="hover:text-brand-primary transition-colors font-medium">Terms</Link>
+              <span className="text-white/20">|</span>
+              <Link to="/" className="hover:text-brand-primary transition-colors font-medium">Cookies</Link>
             </div>
           </div>
         </div>
@@ -262,3 +260,4 @@ const Footer = () => {
 };
 
 export default Footer;
+

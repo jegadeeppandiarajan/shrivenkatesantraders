@@ -24,7 +24,7 @@ router.get(
   passport.authenticate("google", {
     scope: ["profile", "email"],
     prompt: "select_account",
-  })
+  }),
 );
 
 router.get(
@@ -33,12 +33,14 @@ router.get(
     session: false,
     failureRedirect: `${process.env.CLIENT_URL}/login?error=oauth_failed`,
   }),
-  googleCallback
+  googleCallback,
 );
 
 // Protected routes
 router.get("/me", protect, getMe);
-router.post("/logout", protect, logout);
 router.post("/exchange-token", issueTokenForClient);
+
+// Logout doesn't require authentication - allows logout even with expired tokens
+router.post("/logout", logout);
 
 module.exports = router;

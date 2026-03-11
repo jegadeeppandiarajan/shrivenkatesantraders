@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { fetchMyOrders } from "../../features/orders/orderSlice";
 import { useTheme } from "../../context/ThemeContext";
+import AnimatedBackground from "../../components/common/AnimatedBackground";
 import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
@@ -45,7 +46,8 @@ const getStatusConfig = (darkMode) => ({
   },
 });
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+// Get base URL for images (strip /api suffix if present)
+const API_URL = (import.meta.env.VITE_API_URL || "http://localhost:5000/api").replace(/\/api\/?$/, "");
 
 const Orders = () => {
   const dispatch = useDispatch();
@@ -93,8 +95,9 @@ const Orders = () => {
 
   if (loading) {
     return (
-      <div className={`min-h-screen flex items-center justify-center ${darkMode ? 'bg-dark-bg' : 'bg-gradient-to-br from-slate-50 to-slate-100'}`}>
-        <div className="text-center">
+      <div className={`min-h-screen flex items-center justify-center relative ${darkMode ? 'bg-dark-bg' : 'bg-brand-cream'}`}>
+        <AnimatedBackground />
+        <div className="text-center z-10">
           <div className="w-16 h-16 border-4 border-brand-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <p className={`font-medium ${darkMode ? 'text-dark-muted' : 'text-slate-600'}`}>Loading your orders...</p>
         </div>
@@ -104,14 +107,15 @@ const Orders = () => {
 
   if (uniqueOrders.length === 0) {
     return (
-      <div className={`min-h-screen py-12 px-4 ${darkMode ? 'bg-dark-bg' : 'bg-gradient-to-br from-slate-50 to-slate-100'}`}>
-        <div className="max-w-2xl mx-auto">
-          <div className={`rounded-3xl shadow-xl p-12 text-center ${darkMode ? 'bg-dark-card border border-dark-border' : 'bg-white'}`}>
+      <div className={`min-h-screen py-12 px-4 relative ${darkMode ? 'bg-dark-bg' : 'bg-brand-cream'}`}>
+        <AnimatedBackground />
+        <div className="max-w-2xl mx-auto relative z-10">
+          <div className={`rounded-3xl shadow-xl p-12 text-center backdrop-blur-sm ${darkMode ? 'bg-dark-card/90 border border-dark-border' : 'bg-white/90'}`}>
             <div className={`w-32 h-32 mx-auto mb-8 rounded-full flex items-center justify-center ${darkMode ? 'bg-dark-bg' : 'bg-gradient-to-br from-slate-100 to-slate-200'}`}>
               <ReceiptLongIcon sx={{ fontSize: 64 }} className={darkMode ? 'text-dark-muted' : 'text-slate-400'} />
             </div>
-            <h2 className={`text-3xl font-bold mb-4 ${darkMode ? 'text-dark-text' : 'text-slate-800'}`}>No Orders Yet</h2>
-            <p className={`mb-8 max-w-md mx-auto ${darkMode ? 'text-dark-muted' : 'text-slate-500'}`}>
+            <h2 className={`text-3xl font-bold mb-4 ${darkMode ? 'text-dark-text' : 'text-brand-dark'}`}>No Orders Yet</h2>
+            <p className={`mb-8 max-w-md mx-auto ${darkMode ? 'text-dark-muted' : 'text-brand-slate'}`}>
               You haven't placed any orders yet. Start shopping and your orders will appear here!
             </p>
             <Link
@@ -128,12 +132,13 @@ const Orders = () => {
   }
 
   return (
-    <div className={`min-h-screen py-8 px-4 ${darkMode ? 'bg-dark-bg' : 'bg-gradient-to-br from-slate-50 to-slate-100'}`}>
-      <div className="max-w-5xl mx-auto">
+    <div className={`min-h-screen py-8 px-4 relative ${darkMode ? 'bg-dark-bg' : 'bg-brand-cream'}`}>
+      <AnimatedBackground />
+      <div className="max-w-5xl mx-auto relative z-10">
         {/* Header */}
         <div className="mb-8">
-          <h1 className={`text-3xl md:text-4xl font-bold ${darkMode ? 'text-dark-text' : 'text-slate-800'}`}>My Orders</h1>
-          <p className={`mt-2 ${darkMode ? 'text-dark-muted' : 'text-slate-500'}`}>{uniqueOrders.length} {uniqueOrders.length === 1 ? "order" : "orders"} placed</p>
+          <h1 className={`text-3xl md:text-4xl font-bold ${darkMode ? 'text-dark-text' : 'text-brand-dark'}`}>My Orders</h1>
+          <p className={`mt-2 ${darkMode ? 'text-dark-muted' : 'text-brand-slate'}`}>{uniqueOrders.length} {uniqueOrders.length === 1 ? "order" : "orders"} placed</p>
         </div>
 
         {/* Orders List */}
@@ -149,15 +154,15 @@ const Orders = () => {
                 style={{ animationDelay: `${index * 100}ms` }}
               >
                 {/* Order Header */}
-                <div className={`p-6 border-b ${darkMode ? 'border-dark-border' : 'border-slate-100'}`}>
+                <div className={`p-6 border-b ${darkMode ? 'border-dark-border' : 'border-brand-primary/10'}`}>
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div className="flex items-center gap-4">
-                      <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${darkMode ? 'bg-brand-primary/20' : 'bg-gradient-to-br from-brand-primary/10 to-brand-secondary/10'}`}>
+                      <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${darkMode ? 'bg-brand-primary/20' : 'bg-gradient-to-br from-brand-primary/10 to-brand-secondary/10'}`}>
                         <ReceiptLongIcon className="text-brand-primary" />
                       </div>
                       <div>
-                        <h3 className={`font-bold text-lg ${darkMode ? 'text-dark-text' : 'text-slate-800'}`}>{order.orderNumber}</h3>
-                        <div className={`flex items-center gap-2 text-sm ${darkMode ? 'text-dark-muted' : 'text-slate-500'}`}>
+                        <h3 className={`font-bold text-lg ${darkMode ? 'text-dark-text' : 'text-brand-dark'}`}>{order.orderNumber}</h3>
+                        <div className={`flex items-center gap-2 text-sm ${darkMode ? 'text-dark-muted' : 'text-brand-slate'}`}>
                           <CalendarTodayIcon sx={{ fontSize: 14 }} />
                           <span>{formatDate(order.createdAt)}</span>
                         </div>
@@ -176,7 +181,7 @@ const Orders = () => {
                     {order.items.slice(0, 4).map((item, idx) => (
                       <div
                         key={`${order._id}-item-${idx}`}
-                        className={`w-16 h-16 rounded-xl overflow-hidden flex-shrink-0 ${darkMode ? 'bg-dark-bg' : 'bg-slate-100'}`}
+                        className={`w-16 h-16 rounded-2xl overflow-hidden flex-shrink-0 ${darkMode ? 'bg-dark-bg' : 'bg-slate-100'}`}
                       >
                         {getProductImage(item) ? (
                           <img
@@ -192,8 +197,8 @@ const Orders = () => {
                       </div>
                     ))}
                     {order.items.length > 4 && (
-                      <div className={`w-16 h-16 rounded-xl flex items-center justify-center ${darkMode ? 'bg-dark-bg' : 'bg-slate-100'}`}>
-                        <span className={`text-sm font-semibold ${darkMode ? 'text-dark-muted' : 'text-slate-500'}`}>+{order.items.length - 4}</span>
+                      <div className={`w-16 h-16 rounded-2xl flex items-center justify-center ${darkMode ? 'bg-dark-bg' : 'bg-slate-100'}`}>
+                        <span className={`text-sm font-semibold ${darkMode ? 'text-dark-muted' : 'text-brand-slate'}`}>+{order.items.length - 4}</span>
                       </div>
                     )}
                   </div>
@@ -201,19 +206,19 @@ const Orders = () => {
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div className="flex items-center gap-6">
                       <div>
-                        <p className={`text-sm ${darkMode ? 'text-dark-muted' : 'text-slate-500'}`}>Items</p>
-                        <p className={`font-semibold ${darkMode ? 'text-dark-text' : 'text-slate-800'}`}>{order.items.length} products</p>
+                        <p className={`text-sm ${darkMode ? 'text-dark-muted' : 'text-brand-slate'}`}>Items</p>
+                        <p className={`font-semibold ${darkMode ? 'text-dark-text' : 'text-brand-dark'}`}>{order.items.length} products</p>
                       </div>
                       <div className={`h-8 w-px ${darkMode ? 'bg-dark-border' : 'bg-slate-200'}`}></div>
                       <div>
-                        <p className={`text-sm ${darkMode ? 'text-dark-muted' : 'text-slate-500'}`}>Total Amount</p>
+                        <p className={`text-sm ${darkMode ? 'text-dark-muted' : 'text-brand-slate'}`}>Total Amount</p>
                         <p className="font-bold text-brand-primary text-lg">₹{order.totalAmount.toLocaleString()}</p>
                       </div>
                     </div>
 
                     <Link
                       to={`/orders/${order._id}`}
-                      className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-brand-primary to-brand-gold text-white rounded-xl font-semibold hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-300"
+                      className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-brand-primary to-brand-gold text-white rounded-2xl font-semibold hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-300"
                     >
                       View Details
                       <ArrowForwardIcon sx={{ fontSize: 18 }} />
@@ -223,7 +228,7 @@ const Orders = () => {
 
                 {/* Shipping Info */}
                 {order.shippingAddress && (
-                  <div className={`px-6 py-4 border-t ${darkMode ? 'bg-dark-bg border-dark-border' : 'bg-slate-50 border-slate-100'}`}>
+                  <div className={`px-6 py-4 border-t ${darkMode ? 'bg-dark-bg border-dark-border' : 'bg-slate-50 border-brand-primary/10'}`}>
                     <div className="flex items-start gap-3">
                       <LocalShippingIcon className={`mt-0.5 ${darkMode ? 'text-dark-muted' : 'text-slate-400'}`} sx={{ fontSize: 18 }} />
                       <div className={`text-sm ${darkMode ? 'text-dark-muted' : 'text-slate-600'}`}>
@@ -244,3 +249,4 @@ const Orders = () => {
 };
 
 export default Orders;
+

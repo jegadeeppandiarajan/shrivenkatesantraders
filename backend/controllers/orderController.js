@@ -2,7 +2,10 @@ const asyncHandler = require("express-async-handler");
 const Order = require("../models/Order");
 const Product = require("../models/Product");
 const { emitOrderStatus } = require("../sockets/orderSocket");
-const { sendOrderStatusUpdateEmail } = require("../services/emailService");
+const {
+  sendOrderStatusUpdateEmail,
+  sendOrderConfirmationEmail,
+} = require("../services/emailService");
 
 const buildOrderItems = async (items = []) => {
   if (!Array.isArray(items) || !items.length) {
@@ -166,6 +169,15 @@ exports.updateOrderStatus = asyncHandler(async (req, res) => {
   // Send status update email
   await sendOrderStatusUpdateEmail(order, status, note);
 
+  // When order is confirmed, also send the bill/receipt (invoice) with tracking info
+  if (status === "confirmed") {
+    const populatedOrder = await Order.findById(order._id)
+      .populate("user", "name email")
+      .populate("items.product", "name category price");
+    if (populatedOrder && populatedOrder.user && populatedOrder.user.email) {
+      await sendOrderConfirmationEmail(populatedOrder);
+    }
+  }
 
   res.status(200).json({ success: true, data: order });
 });
@@ -207,7 +219,7 @@ exports.cancelOrder = asyncHandler(async (req, res) => {
 
 exports.getOrderTimeline = asyncHandler(async (req, res) => {
   const order = await Order.findById(req.params.id).select(
-    "statusHistory orderStatus user"
+    "statusHistory orderStatus user",
   );
 
   if (!order) {
@@ -222,4 +234,66 @@ exports.getOrderTimeline = asyncHandler(async (req, res) => {
   }
 
   res.status(200).json({ success: true, data: order.statusHistory });
+});
+
+// Send invoice email to customer
+exports.sendInvoiceEmail = asyncHandler(async (req, res) => {
+  const order = await Order.findById(req.params.id)
+    .populate("user", "name email")
+    .populate("items.product", "name category price");
+
+  if (!order) {
+    return res.status(404).json({ success: false, message: "Order not found" });
+  }
+
+  if (!order.user?.email) {
+    return res
+      .status(400)
+      .json({ success: false, message: "Customer email not found" });
+  }
+
+  try {
+    // Create order object with required fields for email
+    const orderForEmail = {
+      _id: order._id,
+      orderNumber:
+        order.orderNumber || order._id.toString().slice(-8).toUpperCase(),
+      user: order.user,
+      items: order.items.map((item) => ({
+        name: item.product?.name || item.name,
+        price: item.price || item.product?.price,
+        quantity: item.quantity,
+      })),
+      totalAmount: order.totalAmount,
+      shippingAddress: order.shippingAddress,
+      paymentStatus: order.paymentStatus,
+      orderStatus: order.orderStatus,
+      shippingCharge: order.shippingCost || 0,
+      createdAt: order.createdAt,
+    };
+
+    const emailResult = await sendOrderConfirmationEmail(orderForEmail);
+
+    if (emailResult.success) {
+      console.log(
+        `📧 Invoice email sent to ${order.user.email} for order ${order._id}`,
+      );
+      res.status(200).json({
+        success: true,
+        message: `Invoice sent to ${order.user.email}`,
+      });
+    } else {
+      console.error(`❌ Failed to send invoice: ${emailResult.error}`);
+      res.status(500).json({
+        success: false,
+        message: emailResult.error || "Failed to send invoice email",
+      });
+    }
+  } catch (error) {
+    console.error("❌ Error sending invoice email:", error.message);
+    res.status(500).json({
+      success: false,
+      message: error.message || "Failed to send invoice email",
+    });
+  }
 });

@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { registerUser, clearError } from "../../features/auth/authSlice";
+import { useTheme } from "../../context/ThemeContext";
+import AnimatedBackground from "../../components/common/AnimatedBackground";
 import { toast } from "react-toastify";
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
@@ -83,30 +85,30 @@ const Register = () => {
     window.location.href = `${apiUrl}/api/auth/google`;
   };
 
-  return (
-    <section className="min-h-screen flex items-center justify-center px-4 py-12 relative overflow-hidden">
-      {/* Animated Background */}
-      <div className="absolute inset-0 -z-10">
-        <div className="absolute top-20 right-10 w-72 h-72 bg-brand-secondary/10 rounded-full blur-3xl animate-float"></div>
-        <div className="absolute bottom-20 left-10 w-96 h-96 bg-brand-primary/10 rounded-full blur-3xl animate-float delay-300"></div>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] border border-slate-200/50 rounded-full animate-spin-slow"></div>
-      </div>
+  const { darkMode } = useTheme();
 
-      <div className="max-w-md w-full animate-scale-in">
-        <div className="glass rounded-3xl border border-white/50 shadow-2xl p-8 md:p-10 relative overflow-hidden">
+  return (
+    <section className={`min-h-screen flex items-center justify-center px-4 py-12 relative overflow-hidden ${darkMode ? 'bg-dark-bg' : 'bg-brand-cream'}`}>
+      {/* Animated Background */}
+      <AnimatedBackground />
+
+      <div className="max-w-md w-full animate-scale-in relative z-10">
+        <div className={`rounded-3xl border shadow-2xl p-8 md:p-10 relative overflow-hidden backdrop-blur-sm ${darkMode ? 'bg-dark-card/95 border-dark-border' : 'bg-white border-brand-primary/10'}`}>
           {/* Decorative */}
           <div className="absolute -top-20 -left-20 w-40 h-40 bg-gradient-to-br from-brand-secondary/20 to-brand-primary/20 rounded-full blur-2xl"></div>
           
           {/* Logo */}
           <div className="flex justify-center mb-6">
-            <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-brand-primary to-brand-dark text-white flex items-center justify-center font-bold text-2xl shadow-lg animate-pulse-glow">
-              SV
-            </div>
+            <img 
+              src="/logo.png" 
+              alt="Shri Venkatesan Traders" 
+              className="h-16 w-auto object-contain"
+            />
           </div>
 
-          <p className="text-xs uppercase tracking-[0.5em] text-slate-400 text-center">Join us today</p>
-          <h1 className="text-3xl font-bold text-brand-dark mt-3 text-center">Create Account</h1>
-          <p className="text-slate-500 mt-2 text-center text-sm">
+          <p className={`text-xs uppercase tracking-[0.5em] text-center font-medium ${darkMode ? 'text-dark-muted' : 'text-brand-slate'}`}>Join us today</p>
+          <h1 className={`text-3xl font-display font-bold mt-3 text-center ${darkMode ? 'text-dark-text' : 'text-brand-dark'}`}>Create Account</h1>
+          <p className={`mt-2 text-center text-sm font-display ${darkMode ? 'text-dark-muted' : 'text-brand-slate'}`}>
             Start your shopping journey with us
           </p>
 
@@ -115,7 +117,11 @@ const Register = () => {
             onClick={handleGoogleLogin}
             onMouseEnter={() => setIsGoogleHovered(true)}
             onMouseLeave={() => setIsGoogleHovered(false)}
-            className={`mt-6 w-full flex items-center justify-center gap-3 bg-white border-2 border-slate-200 rounded-2xl py-3.5 font-semibold transition-all duration-300 ${
+            className={`mt-6 w-full flex items-center justify-center gap-3 border-2 rounded-full py-3.5 font-semibold transition-all duration-300 ${
+              darkMode 
+                ? 'bg-dark-bg border-dark-border hover:border-brand-primary' 
+                : 'bg-white border-brand-primary/20'
+            } ${
               isGoogleHovered ? "border-brand-primary shadow-lg shadow-brand-primary/20 scale-[1.02]" : ""
             }`}
           >
@@ -125,30 +131,30 @@ const Register = () => {
               <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
               <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
             </svg>
-            <span className="text-slate-700">Sign up with Google</span>
+            <span className={darkMode ? 'text-dark-text' : 'text-slate-700'}>Sign up with Google</span>
           </button>
 
           {/* Divider */}
           <div className="my-6 flex items-center gap-4">
-            <div className="flex-1 h-px bg-slate-200"></div>
-            <span className="text-xs text-slate-400 uppercase tracking-wider">or register with email</span>
-            <div className="flex-1 h-px bg-slate-200"></div>
+            <div className={`flex-1 h-px ${darkMode ? 'bg-dark-border' : 'bg-brand-primary/20'}`}></div>
+            <span className={`text-xs uppercase tracking-wider font-medium ${darkMode ? 'text-dark-muted' : 'text-brand-slate'}`}>or register with email</span>
+            <div className={`flex-1 h-px ${darkMode ? 'bg-dark-border' : 'bg-brand-primary/20'}`}></div>
           </div>
 
           {/* Registration Form */}
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Name */}
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1.5">Full Name *</label>
+              <label className={`block text-sm font-medium mb-1.5 ${darkMode ? 'text-dark-text' : 'text-brand-dark'}`}>Full Name *</label>
               <div className="relative">
-                <PersonIcon className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" fontSize="small" />
+                <PersonIcon className={`absolute left-4 top-1/2 -translate-y-1/2 ${darkMode ? 'text-dark-muted' : 'text-brand-slate'}`} fontSize="small" />
                 <input
                   type="text"
                   name="name"
                   value={formData.name}
                   onChange={handleChange}
                   placeholder="John Doe"
-                  className="w-full pl-10 pr-4 py-3 rounded-xl border-2 border-slate-200 focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/10 outline-none transition-all"
+                  className={`w-full pl-11 pr-4 py-3.5 rounded-full border-2 outline-none transition-all ${darkMode ? 'bg-dark-bg border-dark-border text-dark-text placeholder-dark-muted focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/20' : 'border-brand-primary/20 focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/10 bg-white'}`}
                   required
                 />
               </div>
@@ -156,16 +162,16 @@ const Register = () => {
 
             {/* Email */}
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1.5">Email Address *</label>
+              <label className={`block text-sm font-medium mb-1.5 ${darkMode ? 'text-dark-text' : 'text-brand-dark'}`}>Email Address *</label>
               <div className="relative">
-                <EmailIcon className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" fontSize="small" />
+                <EmailIcon className={`absolute left-4 top-1/2 -translate-y-1/2 ${darkMode ? 'text-dark-muted' : 'text-brand-slate'}`} fontSize="small" />
                 <input
                   type="email"
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
                   placeholder="you@example.com"
-                  className="w-full pl-10 pr-4 py-3 rounded-xl border-2 border-slate-200 focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/10 outline-none transition-all"
+                  className={`w-full pl-11 pr-4 py-3.5 rounded-full border-2 outline-none transition-all ${darkMode ? 'bg-dark-bg border-dark-border text-dark-text placeholder-dark-muted focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/20' : 'border-brand-primary/20 focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/10 bg-white'}`}
                   required
                 />
               </div>
@@ -173,39 +179,39 @@ const Register = () => {
 
             {/* Phone */}
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1.5">Phone Number</label>
+              <label className={`block text-sm font-medium mb-1.5 ${darkMode ? 'text-dark-text' : 'text-brand-dark'}`}>Phone Number</label>
               <div className="relative">
-                <PhoneIcon className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" fontSize="small" />
+                <PhoneIcon className={`absolute left-4 top-1/2 -translate-y-1/2 ${darkMode ? 'text-dark-muted' : 'text-brand-slate'}`} fontSize="small" />
                 <input
                   type="tel"
                   name="phone"
                   value={formData.phone}
                   onChange={handleChange}
                   placeholder="+91 9876543210"
-                  className="w-full pl-10 pr-4 py-3 rounded-xl border-2 border-slate-200 focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/10 outline-none transition-all"
+                  className={`w-full pl-11 pr-4 py-3.5 rounded-full border-2 outline-none transition-all ${darkMode ? 'bg-dark-bg border-dark-border text-dark-text placeholder-dark-muted focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/20' : 'border-brand-primary/20 focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/10 bg-white'}`}
                 />
               </div>
             </div>
 
             {/* Password */}
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1.5">Password *</label>
+              <label className={`block text-sm font-medium mb-1.5 ${darkMode ? 'text-dark-text' : 'text-brand-dark'}`}>Password *</label>
               <div className="relative">
-                <LockIcon className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" fontSize="small" />
+                <LockIcon className={`absolute left-4 top-1/2 -translate-y-1/2 ${darkMode ? 'text-dark-muted' : 'text-brand-slate'}`} fontSize="small" />
                 <input
                   type={showPassword ? "text" : "password"}
                   name="password"
                   value={formData.password}
                   onChange={handleChange}
                   placeholder="Min. 6 characters"
-                  className="w-full pl-10 pr-12 py-3 rounded-xl border-2 border-slate-200 focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/10 outline-none transition-all"
+                  className={`w-full pl-11 pr-12 py-3.5 rounded-full border-2 outline-none transition-all ${darkMode ? 'bg-dark-bg border-dark-border text-dark-text placeholder-dark-muted focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/20' : 'border-brand-primary/20 focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/10 bg-white'}`}
                   required
                   minLength={6}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                  className={`absolute right-3 top-1/2 -translate-y-1/2 ${darkMode ? 'text-dark-muted hover:text-dark-text' : 'text-slate-400 hover:text-slate-600'}`}
                 >
                   {showPassword ? <VisibilityIcon fontSize="small" /> : <VisibilityOffIcon fontSize="small" />}
                 </button>
@@ -214,22 +220,22 @@ const Register = () => {
 
             {/* Confirm Password */}
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1.5">Confirm Password *</label>
+              <label className={`block text-sm font-medium mb-1.5 ${darkMode ? 'text-dark-text' : 'text-brand-dark'}`}>Confirm Password *</label>
               <div className="relative">
-                <LockIcon className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" fontSize="small" />
+                <LockIcon className={`absolute left-4 top-1/2 -translate-y-1/2 ${darkMode ? 'text-dark-muted' : 'text-brand-slate'}`} fontSize="small" />
                 <input
                   type={showConfirmPassword ? "text" : "password"}
                   name="confirmPassword"
                   value={formData.confirmPassword}
                   onChange={handleChange}
                   placeholder="Re-enter password"
-                  className="w-full pl-10 pr-12 py-3 rounded-xl border-2 border-slate-200 focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/10 outline-none transition-all"
+                  className={`w-full pl-11 pr-12 py-3.5 rounded-full border-2 outline-none transition-all ${darkMode ? 'bg-dark-bg border-dark-border text-dark-text placeholder-dark-muted focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/20' : 'border-brand-primary/20 focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/10 bg-white'}`}
                   required
                 />
                 <button
                   type="button"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                  className={`absolute right-3 top-1/2 -translate-y-1/2 ${darkMode ? 'text-dark-muted hover:text-dark-text' : 'text-slate-400 hover:text-slate-600'}`}
                 >
                   {showConfirmPassword ? <VisibilityIcon fontSize="small" /> : <VisibilityOffIcon fontSize="small" />}
                 </button>
@@ -237,17 +243,17 @@ const Register = () => {
             </div>
 
             {/* Terms */}
-            <p className="text-xs text-slate-500 text-center">
+            <p className={`text-xs text-center ${darkMode ? 'text-dark-muted' : 'text-brand-slate'}`}>
               By registering, you agree to our{" "}
-              <a href="#" className="text-brand-primary hover:underline">Terms of Service</a>
+              <a href="#" className="text-brand-primary hover:text-brand-accent transition-colors">Terms of Service</a>
               {" "}and{" "}
-              <a href="#" className="text-brand-primary hover:underline">Privacy Policy</a>
+              <a href="#" className="text-brand-primary hover:text-brand-accent transition-colors">Privacy Policy</a>
             </p>
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3.5 rounded-xl bg-gradient-to-r from-brand-primary to-brand-dark text-white font-semibold hover:shadow-lg hover:shadow-brand-primary/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className="w-full py-3.5 rounded-full bg-brand-primary text-white font-semibold hover:bg-brand-secondary hover:shadow-lg hover:shadow-brand-primary/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               {loading ? (
                 <>
@@ -264,16 +270,16 @@ const Register = () => {
           </form>
 
           {/* Login Link */}
-          <p className="mt-6 text-center text-sm text-slate-500">
+          <p className={`mt-6 text-center text-sm ${darkMode ? 'text-dark-muted' : 'text-brand-slate'}`}>
             Already have an account?{" "}
-            <Link to="/login" className="text-brand-primary font-semibold hover:underline">
+            <Link to="/login" className="text-brand-primary font-semibold hover:text-brand-accent transition-colors">
               Sign in
             </Link>
           </p>
         </div>
 
         {/* Security Badge */}
-        <div className="mt-6 flex justify-center gap-6 text-slate-400">
+        <div className={`mt-6 flex justify-center gap-6 ${darkMode ? 'text-dark-muted' : 'text-brand-slate'}`}>
           <div className="flex items-center gap-2 text-xs">
             <svg className="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
@@ -293,3 +299,4 @@ const Register = () => {
 };
 
 export default Register;
+

@@ -3,16 +3,16 @@ import api from "../../services/api";
 
 export const fetchDashboard = createAsyncThunk(
   "dashboard/fetch",
-  async (_, thunkAPI) => {
+  async (days = 30, thunkAPI) => {
     try {
-      const { data } = await api.get("/admin/dashboard");
+      const { data } = await api.get(`/admin/dashboard?days=${days}`);
       return data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data?.message || "Unable to load dashboard"
+        error.response?.data?.message || "Unable to load dashboard",
       );
     }
-  }
+  },
 );
 
 export const fetchPayments = createAsyncThunk(
@@ -20,16 +20,19 @@ export const fetchPayments = createAsyncThunk(
   async () => {
     const { data } = await api.get("/admin/payments");
     return data.data;
-  }
+  },
 );
 
 const dashboardSlice = createSlice({
   name: "dashboard",
   initialState: {
     metrics: null,
+    orderStatusCounts: null,
     revenueSeries: [],
     bestSellers: [],
     lowStock: [],
+    recentOrders: [],
+    topCustomers: [],
     payments: [],
     loading: false,
     error: null,
@@ -50,9 +53,12 @@ const dashboardSlice = createSlice({
       .addCase(fetchDashboard.fulfilled, (state, action) => {
         state.loading = false;
         state.metrics = action.payload.metrics;
+        state.orderStatusCounts = action.payload.orderStatusCounts;
         state.revenueSeries = action.payload.revenueSeries;
         state.bestSellers = action.payload.bestSellers;
         state.lowStock = action.payload.lowStock;
+        state.recentOrders = action.payload.recentOrders || [];
+        state.topCustomers = action.payload.topCustomers || [];
       })
       .addCase(fetchDashboard.rejected, (state, action) => {
         state.loading = false;
@@ -66,3 +72,4 @@ const dashboardSlice = createSlice({
 
 export const { updateRealtimeStats } = dashboardSlice.actions;
 export default dashboardSlice.reducer;
+

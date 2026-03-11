@@ -205,8 +205,8 @@ exports.googleCallback = asyncHandler(async (req, res) => {
   if (!req.user) {
     return res.redirect(
       `${process.env.CLIENT_URL}/login?error=${encodeURIComponent(
-        "Google authentication failed"
-      )}`
+        "Google authentication failed",
+      )}`,
     );
   }
 
@@ -226,10 +226,15 @@ exports.getMe = asyncHandler(async (req, res) => {
 });
 
 exports.logout = asyncHandler(async (req, res) => {
-  res.cookie("token", "", {
+  // Clear cookie with matching options to ensure it's properly removed
+  const cookieOptions = {
     httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
     expires: new Date(0),
-  });
+  };
+
+  res.cookie("token", "", cookieOptions);
 
   res.status(200).json({
     success: true,

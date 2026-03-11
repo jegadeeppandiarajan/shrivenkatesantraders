@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { fetchCurrentUser, setToken } from "../../features/auth/authSlice";
+import { fetchCurrentUser, setToken, logoutSuccess } from "../../features/auth/authSlice";
+import { toast } from "react-toastify";
 
 const AuthCallback = () => {
   const [params] = useSearchParams();
@@ -15,7 +16,9 @@ const AuthCallback = () => {
       const errorParam = params.get("error");
 
       if (errorParam) {
-        setError(decodeURIComponent(errorParam));
+        const errorMessage = decodeURIComponent(errorParam);
+        setError(errorMessage);
+        toast.error(errorMessage, { toastId: 'auth-callback-error' });
         setTimeout(() => navigate("/login", { replace: true }), 2000);
         return;
       }
@@ -28,6 +31,9 @@ const AuthCallback = () => {
           // Wait for user data to be fetched
           const result = await dispatch(fetchCurrentUser()).unwrap();
           
+          // Show success message
+          toast.success(`Welcome back, ${result.name}!`, { toastId: 'auth-welcome' });
+          
           // Navigate based on user role
           if (result.role === "admin") {
             navigate("/admin", { replace: true });
@@ -36,7 +42,10 @@ const AuthCallback = () => {
           }
         } catch (err) {
           console.error("Auth error:", err);
+          // Clear any invalid token
+          dispatch(logoutSuccess());
           setError("Failed to authenticate. Please try again.");
+          toast.error("Authentication failed. Please try again.", { toastId: 'auth-failed' });
           setTimeout(() => navigate("/login", { replace: true }), 2000);
         }
       } else {
@@ -52,7 +61,7 @@ const AuthCallback = () => {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <p className="text-red-500 text-lg mb-2">{error}</p>
-          <p className="text-slate-500">Redirecting to login...</p>
+          <p className="text-brand-slate">Redirecting to login...</p>
         </div>
       </div>
     );
@@ -69,3 +78,4 @@ const AuthCallback = () => {
 };
 
 export default AuthCallback;
+

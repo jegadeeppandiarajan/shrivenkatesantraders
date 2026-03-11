@@ -34,6 +34,10 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    customAvatar: {
+      type: String,
+      default: "",
+    },
     role: {
       type: String,
       enum: ["user", "admin"],

@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchMyOrders } from "../../features/orders/orderSlice";
 import { setUser } from "../../features/auth/authSlice";
 import { useTheme } from "../../context/ThemeContext";
+import AnimatedBackground from "../../components/common/AnimatedBackground";
 import api from "../../services/api";
 import PersonIcon from '@mui/icons-material/Person';
 import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
@@ -18,6 +19,13 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ErrorIcon from '@mui/icons-material/Error';
 import CameraAltIcon from '@mui/icons-material/CameraAlt';
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
+import TrendingUpIcon from '@mui/icons-material/TrendingUp';
+import LocalOfferIcon from '@mui/icons-material/LocalOffer';
+import StarIcon from '@mui/icons-material/Star';
+import CategoryIcon from '@mui/icons-material/Category';
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
+import CardGiftcardIcon from '@mui/icons-material/CardGiftcard';
 
 // Preset avatar options
 const avatarOptions = [
@@ -64,6 +72,95 @@ const UserDashboard = () => {
     setIsVisible(true);
   }, [dispatch]);
 
+  // Calculate analytics data
+  const analytics = useMemo(() => {
+    const totalSpent = list.reduce((sum, o) => sum + (o.totalAmount || 0), 0);
+    // Check both orderStatus and status for compatibility
+    const deliveredOrders = list.filter(o => (o.orderStatus || o.status) === 'delivered');
+    const avgOrderValue = list.length > 0 ? totalSpent / list.length : 0;
+    
+    // Calculate spending by month (last 6 months)
+    const monthlySpending = {};
+    const now = new Date();
+    for (let i = 5; i >= 0; i--) {
+      const month = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const monthKey = month.toLocaleDateString('en-US', { month: 'short' });
+      monthlySpending[monthKey] = 0;
+    }
+    
+    list.forEach(order => {
+      const orderDate = new Date(order.createdAt);
+      const monthKey = orderDate.toLocaleDateString('en-US', { month: 'short' });
+      if (monthlySpending.hasOwnProperty(monthKey)) {
+        monthlySpending[monthKey] += order.totalAmount || 0;
+      }
+    });
+
+    // Calculate category breakdown
+    const categoryCount = {};
+    list.forEach(order => {
+      order.items?.forEach(item => {
+        const category = item.product?.category || 'Other';
+        categoryCount[category] = (categoryCount[category] || 0) + item.quantity;
+      });
+    });
+
+    const topCategories = Object.entries(categoryCount)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 3);
+
+    // Loyalty tier calculation
+    let tier = 'Bronze';
+    let tierColor = 'from-amber-600 to-amber-800';
+    let tierBg = 'bg-amber-500/20';
+    let discount = 0;
+    let nextTierSpend = 10000;
+    let progress = (totalSpent / 10000) * 100;
+
+    if (totalSpent >= 50000) {
+      tier = 'Platinum';
+      tierColor = 'from-slate-300 to-slate-500';
+      tierBg = 'bg-slate-400/20';
+      discount = 15;
+      nextTierSpend = null;
+      progress = 100;
+    } else if (totalSpent >= 25000) {
+      tier = 'Gold';
+      tierColor = 'from-yellow-400 to-yellow-600';
+      tierBg = 'bg-yellow-500/20';
+      discount = 10;
+      nextTierSpend = 50000;
+      progress = ((totalSpent - 25000) / 25000) * 100;
+    } else if (totalSpent >= 10000) {
+      tier = 'Silver';
+      tierColor = 'from-gray-300 to-gray-500';
+      tierBg = 'bg-gray-400/20';
+      discount = 5;
+      nextTierSpend = 25000;
+      progress = ((totalSpent - 10000) / 15000) * 100;
+    }
+
+    // Member since
+    const memberSince = user?.createdAt 
+      ? new Date(user.createdAt).toLocaleDateString('en-IN', { month: 'long', year: 'numeric' })
+      : 'N/A';
+
+    return {
+      totalSpent,
+      avgOrderValue,
+      monthlySpending,
+      topCategories,
+      tier,
+      tierColor,
+      tierBg,
+      discount,
+      nextTierSpend,
+      progress: Math.min(progress, 100),
+      memberSince,
+      deliveredCount: deliveredOrders.length
+    };
+  }, [list, user]);
+
   const showNotification = (message, type = "success") => {
     setNotification({ message, type });
     setTimeout(() => setNotification(null), 3000);
@@ -89,7 +186,7 @@ const UserDashboard = () => {
   };
 
   const openAvatarModal = () => {
-    setSelectedAvatar(user?.avatar || null);
+    setSelectedAvatar(user?.customAvatar || user?.avatar || null);
     setShowAvatarModal(true);
   };
 
@@ -146,239 +243,418 @@ const UserDashboard = () => {
   };
 
   return (
-    <div className="p-5 lg:p-8 space-y-6">
+    <div className={`min-h-screen relative ${darkMode ? 'bg-dark-bg' : 'bg-stone-50'}`}>
+      {/* Minimal Industrial Background */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className={`absolute inset-0 ${darkMode ? 'bg-gradient-to-br from-dark-bg via-dark-card/30 to-dark-bg' : 'bg-gradient-to-br from-stone-50 via-white to-stone-50'}`}></div>
+        <div className={`absolute w-[500px] h-[500px] rounded-full blur-[180px] ${darkMode ? 'bg-brand-primary/5' : 'bg-brand-primary/8'} -top-32 -right-32`}></div>
+      </div>
+      <div className="relative z-10 p-4 space-y-6 sm:p-5 lg:p-8">
       {/* Notification */}
       {notification && (
-        <div className={`fixed top-4 right-4 z-[100] px-6 py-4 rounded-2xl shadow-2xl animate-slide-in-right ${
+        <div className={`fixed top-4 right-4 z-[100] px-5 py-3 shadow-xl ${
           notification.type === "error" ? "bg-red-500" : "bg-green-500"
-        } text-white font-semibold flex items-center gap-3`}>
+        } text-white font-bold flex items-center gap-2`}>
           {notification.type === "error" ? (
-            <ErrorIcon sx={{ fontSize: 20 }} />
+            <ErrorIcon sx={{ fontSize: 18 }} />
           ) : (
-            <CheckCircleIcon sx={{ fontSize: 20 }} />
+            <CheckCircleIcon sx={{ fontSize: 18 }} />
           )}
           {notification.message}
         </div>
       )}
 
-      {/* Profile and Orders Stats */}
-      <div className="grid gap-6 lg:grid-cols-2">
-        {/* Profile Card */}
-        <div className={`group rounded-2xl lg:rounded-3xl p-4 sm:p-6 border shadow-lg transition-all duration-700 h-full ${
-          darkMode 
-            ? 'bg-dark-card border-dark-border hover:border-brand-primary/40' 
-            : 'bg-gradient-to-br from-white to-slate-50 border-slate-100 hover:shadow-xl hover:border-brand-primary/30'
-        } ${
-          isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
+      {/* Profile Card - Industrial Style */}
+      <div className={`p-5 sm:p-6 lg:p-8 border transition-all duration-500 ${
+        darkMode 
+          ? 'bg-dark-card border-dark-border hover:border-brand-primary/40' 
+          : 'bg-white border-stone-200 hover:border-brand-primary/40 shadow-sm hover:shadow-md'
+      } ${
+        isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
+      }`}>
+        {/* Profile Header */}
+        <div className={`flex flex-col lg:flex-row items-center gap-6 pb-6 mb-6 border-b ${
+          darkMode ? 'border-dark-border' : 'border-stone-200'
         }`}>
-          {/* Profile Header with Avatar */}
-          <div className={`flex flex-col items-center gap-4 pb-6 mb-6 border-b sm:flex-row ${
-            darkMode ? 'border-dark-border' : 'border-slate-100'
-          }`}>
-            {/* Avatar with Edit Button */}
-            <div className="relative group/avatar">
-              <div className={`w-24 h-24 overflow-hidden border-4 rounded-full shadow-xl sm:w-28 sm:h-28 ${
-                darkMode ? 'border-brand-primary/40' : 'border-brand-primary/30'
-              } bg-gradient-to-br from-brand-primary/20 to-brand-secondary/20`}>
-                {user?.avatar ? (
-                  <img 
-                    src={user.avatar} 
-                    alt={user.name} 
-                    className="object-cover w-full h-full"
-                  />
-                ) : (
-                  <div className="flex items-center justify-center w-full h-full text-3xl font-extrabold text-white bg-gradient-to-br from-brand-primary via-brand-gold to-brand-secondary sm:text-4xl">
-                    {user?.name?.charAt(0).toUpperCase() || "U"}
-                  </div>
-                )}
-              </div>
-              {/* Camera Icon Overlay */}
-              <button
-                onClick={openAvatarModal}
-                className="absolute flex items-center justify-center text-white transition-all duration-300 border-2 border-white rounded-full shadow-lg bottom-1 right-1 w-9 h-9 sm:w-10 sm:h-10 bg-gradient-to-r from-brand-primary via-brand-gold to-brand-secondary hover:scale-110"
-              >
-                <CameraAltIcon sx={{ fontSize: 18 }} />
-              </button>
+          {/* Avatar */}
+          <div className="relative flex-shrink-0">
+            <div className={`w-24 h-24 sm:w-28 sm:h-28 overflow-hidden border-2 ${
+              darkMode ? 'border-brand-primary/40 bg-dark-bg' : 'border-brand-primary/30 bg-stone-100'
+            }`}>
+              {user?.customAvatar ? (
+                <img src={user.customAvatar} alt={user.name} className="object-cover w-full h-full" />
+              ) : user?.avatar ? (
+                <img src={user.avatar} alt={user.name} className="object-cover w-full h-full" />
+              ) : (
+                <div className="flex items-center justify-center w-full h-full text-3xl font-black text-white sm:text-4xl bg-brand-primary">
+                  {user?.name?.charAt(0).toUpperCase() || "U"}
+                </div>
+              )}
             </div>
-            
-            {/* User Info Header */}
-            <div className="flex-1 text-center sm:text-left">
-              <h2 className={`text-xl font-extrabold sm:text-2xl ${
-                darkMode ? 'text-dark-text' : 'text-transparent bg-gradient-to-r from-slate-900 via-brand-primary to-brand-gold bg-clip-text'
-              }`}>{user?.name}</h2>
-              <p className={`mt-1 text-sm ${darkMode ? 'text-dark-muted' : 'text-slate-500'}`}>{user?.email}</p>
-              <div className="flex flex-wrap justify-center gap-2 mt-2 sm:justify-start">
-                <span className={`px-3 py-1 text-xs font-bold capitalize border rounded-full ${
-                  darkMode 
-                    ? 'bg-brand-primary/20 text-brand-primary border-brand-primary/30' 
-                    : 'bg-gradient-to-r from-brand-primary/10 to-brand-gold/10 text-brand-primary border-brand-primary/20'
-                }`}>
-                  {user?.role}
-                </span>
-                {user?.isEmailVerified && (
-                  <span className={`flex items-center gap-1 px-3 py-1 text-xs font-bold rounded-full ${
-                    darkMode 
-                      ? 'bg-green-500/20 text-green-400 border border-green-500/30' 
-                      : 'text-green-600 border border-green-200 bg-green-50'
-                  }`}>
-                    <CheckCircleIcon sx={{ fontSize: 12 }} />
-                    Verified
-                  </span>
-                )}
-              </div>
-            </div>
-
-            {/* Edit Button */}
             <button
-              onClick={openEditModal}
-              className="flex items-center gap-1.5 px-4 py-2 text-sm font-bold text-white bg-gradient-to-r from-brand-primary via-brand-gold to-brand-secondary hover:shadow-lg hover:scale-105 rounded-xl transition-all"
+              onClick={openAvatarModal}
+              className="absolute flex items-center justify-center w-8 h-8 text-white bg-brand-primary hover:bg-brand-secondary transition-all bottom-0 right-0"
             >
-              <EditIcon sx={{ fontSize: 16 }} />
-              Edit Profile
+              <CameraAltIcon sx={{ fontSize: 16 }} />
             </button>
           </div>
-
-          {/* Profile Details */}
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <div className={`flex items-center gap-3 p-3 transition-all rounded-xl ${
-              darkMode 
-                ? 'bg-dark-bg hover:bg-dark-hover' 
-                : 'bg-slate-50 hover:bg-gradient-to-r hover:from-brand-light hover:to-brand-primary/5'
-            }`}>
-              <div className={`flex items-center justify-center w-10 h-10 rounded-xl ${
-                darkMode ? 'bg-brand-primary/20' : 'bg-gradient-to-br from-brand-primary/20 to-brand-gold/20'
+          
+          {/* User Info */}
+          <div className="flex-1 text-center lg:text-left">
+            <h2 className={`text-2xl sm:text-3xl font-black ${darkMode ? 'text-white' : 'text-brand-dark'}`}>{user?.name}</h2>
+            <p className={`mt-1 text-sm ${darkMode ? 'text-dark-muted' : 'text-stone-600'}`}>{user?.email}</p>
+            <div className="flex flex-wrap justify-center gap-2 mt-3 lg:justify-start">
+              <span className={`px-3 py-1 text-xs font-bold uppercase tracking-wider ${
+                darkMode ? 'bg-brand-primary/20 text-brand-primary' : 'bg-brand-primary/10 text-brand-primary'
               }`}>
-                <PersonIcon sx={{ fontSize: 20 }} className="text-brand-primary" />
-              </div>
-              <div>
-                <p className={`text-xs font-bold tracking-wider uppercase ${darkMode ? 'text-dark-muted' : 'text-slate-400'}`}>Name</p>
-                <p className={`text-sm font-bold ${darkMode ? 'text-dark-text' : 'text-slate-700'}`}>{user?.name}</p>
-              </div>
-            </div>
-            
-            <div className={`flex items-center gap-3 p-3 transition-all rounded-xl ${
-              darkMode 
-                ? 'bg-dark-bg hover:bg-dark-hover' 
-                : 'bg-slate-50 hover:bg-gradient-to-r hover:from-brand-light hover:to-brand-primary/5'
-            }`}>
-              <div className={`flex items-center justify-center w-10 h-10 rounded-xl ${
-                darkMode ? 'bg-brand-primary/20' : 'bg-gradient-to-br from-brand-primary/20 to-brand-gold/20'
-              }`}>
-                <EmailIcon sx={{ fontSize: 20 }} className="text-brand-primary" />
-              </div>
-              <div className="min-w-0">
-                <p className={`text-xs font-bold tracking-wider uppercase ${darkMode ? 'text-dark-muted' : 'text-slate-400'}`}>Email</p>
-                <p className={`text-sm font-bold truncate ${darkMode ? 'text-dark-text' : 'text-slate-700'}`}>{user?.email}</p>
-              </div>
-            </div>
-
-            {user?.phone && (
-              <div className={`flex items-center gap-3 p-3 transition-all rounded-xl ${
-                darkMode 
-                  ? 'bg-dark-bg hover:bg-dark-hover' 
-                  : 'bg-slate-50 hover:bg-gradient-to-r hover:from-brand-light hover:to-brand-primary/5'
-              }`}>
-                <div className={`flex items-center justify-center w-10 h-10 rounded-xl ${
-                  darkMode ? 'bg-brand-primary/20' : 'bg-gradient-to-br from-brand-primary/20 to-brand-gold/20'
+                {user?.role}
+              </span>
+              {user?.isEmailVerified && (
+                <span className={`flex items-center gap-1 px-3 py-1 text-xs font-bold uppercase tracking-wider ${
+                  darkMode ? 'bg-green-500/20 text-green-400' : 'bg-green-100 text-green-700'
                 }`}>
-                  <PhoneIcon sx={{ fontSize: 20 }} className="text-brand-primary" />
-                </div>
-                <div>
-                  <p className={`text-xs font-bold tracking-wider uppercase ${darkMode ? 'text-dark-muted' : 'text-slate-400'}`}>Phone</p>
-                  <p className={`text-sm font-bold ${darkMode ? 'text-dark-text' : 'text-slate-700'}`}>{user?.phone}</p>
-                </div>
-              </div>
-            )}
-
-            <div className={`flex items-center gap-3 p-3 transition-all rounded-xl ${
-              darkMode 
-                ? 'bg-dark-bg hover:bg-dark-hover' 
-                : 'bg-slate-50 hover:bg-gradient-to-r hover:from-brand-light hover:to-brand-primary/5'
-            }`}>
-              <div className={`flex items-center justify-center w-10 h-10 rounded-xl ${
-                darkMode ? 'bg-brand-primary/20' : 'bg-gradient-to-br from-brand-primary/20 to-brand-gold/20'
-              }`}>
-                <BadgeIcon sx={{ fontSize: 20 }} className="text-brand-primary" />
-              </div>
-              <div>
-                <p className={`text-xs font-bold tracking-wider uppercase ${darkMode ? 'text-dark-muted' : 'text-slate-400'}`}>Role</p>
-                <p className={`text-sm font-bold capitalize ${darkMode ? 'text-dark-text' : 'text-slate-700'}`}>{user?.role}</p>
-              </div>
+                  <CheckCircleIcon sx={{ fontSize: 12 }} />
+                  Verified
+                </span>
+              )}
+              <span className={`flex items-center gap-1 px-3 py-1 text-xs font-bold uppercase tracking-wider bg-gradient-to-r ${analytics.tierColor} text-white`}>
+                <EmojiEventsIcon sx={{ fontSize: 12 }} />
+                {analytics.tier}
+              </span>
             </div>
-
-            {(user?.address?.city || user?.address?.state) && (
-              <div className={`flex items-center gap-3 p-3 transition-all rounded-xl sm:col-span-2 ${
-                darkMode 
-                  ? 'bg-dark-bg hover:bg-dark-hover' 
-                  : 'bg-slate-50 hover:bg-gradient-to-r hover:from-brand-light hover:to-brand-primary/5'
-              }`}>
-                <div className={`flex items-center justify-center w-10 h-10 rounded-xl ${
-                  darkMode ? 'bg-brand-primary/20' : 'bg-gradient-to-br from-brand-primary/20 to-brand-gold/20'
-                }`}>
-                  <LocationCityIcon sx={{ fontSize: 20 }} className="text-brand-primary" />
-                </div>
-                <div>
-                  <p className={`text-xs font-bold tracking-wider uppercase ${darkMode ? 'text-dark-muted' : 'text-slate-400'}`}>Location</p>
-                  <p className={`text-sm font-bold ${darkMode ? 'text-dark-text' : 'text-slate-700'}`}>
-                    {[user?.address?.street, user?.address?.city, user?.address?.state, user?.address?.pincode].filter(Boolean).join(", ")}
-                  </p>
-                </div>
-              </div>
-            )}
           </div>
+
+          {/* Edit Button */}
+          <button
+            onClick={openEditModal}
+            className="flex items-center gap-2 px-5 py-2.5 text-sm font-bold uppercase tracking-wider text-white bg-brand-primary hover:bg-brand-secondary transition-all"
+          >
+            <EditIcon sx={{ fontSize: 16 }} />
+            Edit Profile
+          </button>
         </div>
 
+        {/* Profile Details Grid */}
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <div className={`flex items-center gap-3 p-4 border transition-all ${
+            darkMode 
+              ? 'bg-dark-bg border-dark-border hover:border-brand-primary/40' 
+              : 'bg-stone-50 border-stone-200 hover:border-brand-primary/40'
+          }`}>
+            <div className="flex items-center justify-center p-3 bg-brand-primary/10 rounded-2xl w-12 h-12">
+              <PersonIcon sx={{ fontSize: 24 }} className="text-brand-primary" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className={`text-xs font-bold tracking-wider uppercase ${darkMode ? 'text-dark-muted' : 'text-slate-600'}`}>Name</p>
+              <p className={`text-sm font-bold truncate ${darkMode ? 'text-dark-text' : 'text-slate-700'}`}>{user?.name}</p>
+            </div>
+          </div>
+          
+          <div className={`flex items-center gap-3 p-4 transition-all rounded-2xl ${
+            darkMode 
+              ? 'bg-dark-bg hover:bg-dark-hover' 
+              : 'bg-slate-50 hover:bg-gradient-to-r hover:from-brand-light hover:to-brand-primary/5'
+          }`}>
+            <div className={`flex items-center justify-center w-12 h-12 rounded-2xl ${
+              darkMode ? 'bg-brand-primary/20' : 'bg-gradient-to-br from-brand-primary/20 to-brand-gold/20'
+            }`}>
+              <EmailIcon sx={{ fontSize: 24 }} className="text-brand-primary" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className={`text-xs font-bold tracking-wider uppercase ${darkMode ? 'text-dark-muted' : 'text-slate-600'}`}>Email</p>
+              <p className={`text-sm font-bold truncate ${darkMode ? 'text-dark-text' : 'text-slate-700'}`}>{user?.email}</p>
+            </div>
+          </div>
+
+          <div className={`flex items-center gap-3 p-4 transition-all rounded-2xl ${
+            darkMode 
+              ? 'bg-dark-bg hover:bg-dark-hover' 
+              : 'bg-slate-50 hover:bg-gradient-to-r hover:from-brand-light hover:to-brand-primary/5'
+          }`}>
+            <div className={`flex items-center justify-center w-12 h-12 rounded-2xl ${
+              darkMode ? 'bg-brand-primary/20' : 'bg-gradient-to-br from-brand-primary/20 to-brand-gold/20'
+            }`}>
+              <PhoneIcon sx={{ fontSize: 24 }} className="text-brand-primary" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className={`text-xs font-bold tracking-wider uppercase ${darkMode ? 'text-dark-muted' : 'text-slate-600'}`}>Phone</p>
+              <p className={`text-sm font-bold ${darkMode ? 'text-dark-text' : 'text-slate-700'}`}>{user?.phone || 'Not set'}</p>
+            </div>
+          </div>
+
+          <div className={`flex items-center gap-3 p-4 transition-all rounded-2xl ${
+            darkMode 
+              ? 'bg-dark-bg hover:bg-dark-hover' 
+              : 'bg-slate-50 hover:bg-gradient-to-r hover:from-brand-light hover:to-brand-primary/5'
+          }`}>
+            <div className={`flex items-center justify-center w-12 h-12 rounded-2xl ${
+              darkMode ? 'bg-brand-primary/20' : 'bg-gradient-to-br from-brand-primary/20 to-brand-gold/20'
+            }`}>
+              <CalendarTodayIcon sx={{ fontSize: 24 }} className="text-brand-primary" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className={`text-xs font-bold tracking-wider uppercase ${darkMode ? 'text-dark-muted' : 'text-slate-600'}`}>Member Since</p>
+              <p className={`text-sm font-bold ${darkMode ? 'text-dark-text' : 'text-slate-700'}`}>{analytics.memberSince}</p>
+            </div>
+          </div>
+
+          {(user?.address?.city || user?.address?.state) && (
+            <div className={`flex items-center gap-3 p-4 transition-all rounded-2xl sm:col-span-2 lg:col-span-4 ${
+              darkMode 
+                ? 'bg-dark-bg hover:bg-dark-hover' 
+                : 'bg-slate-50 hover:bg-gradient-to-r hover:from-brand-light hover:to-brand-primary/5'
+            }`}>
+              <div className={`flex items-center justify-center w-12 h-12 rounded-2xl ${
+                darkMode ? 'bg-brand-primary/20' : 'bg-gradient-to-br from-brand-primary/20 to-brand-gold/20'
+              }`}>
+                <LocationCityIcon sx={{ fontSize: 24 }} className="text-brand-primary" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className={`text-xs font-bold tracking-wider uppercase ${darkMode ? 'text-dark-muted' : 'text-slate-600'}`}>Location</p>
+                <p className={`text-sm font-bold ${darkMode ? 'text-dark-text' : 'text-slate-700'}`}>
+                  {[user?.address?.street, user?.address?.city, user?.address?.state, user?.address?.pincode].filter(Boolean).join(", ")}
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Loyalty & Discount Card */}
+      <div className={`group rounded-2xl lg:rounded-3xl p-4 sm:p-6 border shadow-lg transition-all duration-700 overflow-hidden relative ${
+        darkMode 
+          ? 'bg-dark-card border-dark-border hover:border-brand-gold/40' 
+          : 'bg-gradient-to-br from-white to-amber-50/30 border-brand-primary/10 hover:shadow-xl hover:border-brand-gold/30'
+      } ${
+        isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
+      }`} style={{ transitionDelay: "100ms" }}>
+        {/* Decorative background */}
+        <div className="absolute top-0 right-0 w-64 h-64 translate-x-1/2 -translate-y-1/2 rounded-full bg-gradient-to-br from-brand-gold/10 to-brand-primary/10 blur-3xl"></div>
+        
+        <div className="relative z-10">
+          <div className="flex flex-col gap-6 lg:flex-row lg:items-center">
+            {/* Tier Badge */}
+            <div className="flex items-center gap-4">
+              <div className={`w-20 h-20 sm:w-24 sm:h-24 rounded-2xl flex items-center justify-center bg-gradient-to-br ${analytics.tierColor} shadow-lg`}>
+                <EmojiEventsIcon sx={{ fontSize: 48 }} className="text-white" />
+              </div>
+              <div>
+                <p className={`text-xs uppercase tracking-[0.3em] font-semibold ${darkMode ? 'text-dark-muted' : 'text-slate-600'}`}>Your Status</p>
+                <h3 className={`text-2xl sm:text-3xl font-black bg-gradient-to-r ${analytics.tierColor} bg-clip-text text-transparent`}>
+                  {analytics.tier} Member
+                </h3>
+                <p className={`mt-1 flex items-center gap-2 text-sm font-bold ${darkMode ? 'text-green-400' : 'text-green-600'}`}>
+                  <LocalOfferIcon sx={{ fontSize: 18 }} />
+                  {analytics.discount}% discount on all orders!
+                </p>
+              </div>
+            </div>
+
+            {/* Progress to next tier */}
+            <div className="flex-1 lg:max-w-md">
+              {analytics.nextTierSpend ? (
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className={`text-sm font-semibold ${darkMode ? 'text-dark-muted' : 'text-brand-slate'}`}>
+                      Progress to {analytics.tier === 'Bronze' ? 'Silver' : analytics.tier === 'Silver' ? 'Gold' : 'Platinum'}
+                    </span>
+                    <span className={`text-sm font-bold ${darkMode ? 'text-dark-text' : 'text-slate-700'}`}>
+                      ₹{analytics.totalSpent.toLocaleString()} / ₹{analytics.nextTierSpend.toLocaleString()}
+                    </span>
+                  </div>
+                  <div className={`h-3 rounded-full overflow-hidden ${darkMode ? 'bg-dark-bg' : 'bg-slate-200'}`}>
+                    <div 
+                      className={`h-full rounded-full bg-gradient-to-r ${analytics.tierColor} transition-all duration-1000`}
+                      style={{ width: `${analytics.progress}%` }}
+                    ></div>
+                  </div>
+                  <p className={`mt-2 text-xs ${darkMode ? 'text-dark-muted' : 'text-brand-slate'}`}>
+                    Spend ₹{(analytics.nextTierSpend - analytics.totalSpent).toLocaleString()} more to unlock the next tier!
+                  </p>
+                </div>
+              ) : (
+                <div className={`p-4 rounded-2xl ${darkMode ? 'bg-dark-bg' : 'bg-gradient-to-r from-slate-100 to-slate-50'}`}>
+                  <p className={`flex items-center gap-2 text-sm font-bold ${darkMode ? 'text-brand-gold' : 'text-brand-primary'}`}>
+                    <StarIcon sx={{ fontSize: 18 }} />
+                    You've reached the highest tier! Enjoy maximum benefits.
+                  </p>
+                </div>
+              )}
+            </div>
+
+            {/* Discount Benefit Card */}
+            <div className={`p-4 rounded-2xl ${darkMode ? 'bg-dark-bg border border-dark-border' : 'bg-white shadow-md'}`}>
+              <div className="flex items-center gap-3">
+                <div className="flex items-center justify-center w-12 h-12 rounded-2xl bg-gradient-to-br from-green-400 to-green-600">
+                  <CardGiftcardIcon sx={{ fontSize: 24 }} className="text-white" />
+                </div>
+                <div>
+                  <p className={`text-xs uppercase tracking-wider font-semibold ${darkMode ? 'text-dark-muted' : 'text-slate-600'}`}>Your Discount</p>
+                  <p className="text-2xl font-black text-green-500">{analytics.discount}% OFF</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Tier Benefits */}
+          <div className="grid grid-cols-2 gap-3 mt-6 sm:grid-cols-4">
+            {[
+              { tier: 'Bronze', spend: '₹0', discount: '0%', active: analytics.tier === 'Bronze' },
+              { tier: 'Silver', spend: '₹10,000+', discount: '5%', active: analytics.tier === 'Silver' },
+              { tier: 'Gold', spend: '₹25,000+', discount: '10%', active: analytics.tier === 'Gold' },
+              { tier: 'Platinum', spend: '₹50,000+', discount: '15%', active: analytics.tier === 'Platinum' },
+            ].map((t) => (
+              <div 
+                key={t.tier}
+                className={`p-3 rounded-2xl text-center transition-all ${
+                  t.active 
+                    ? 'bg-gradient-to-br from-brand-primary/20 to-brand-gold/20 ring-2 ring-brand-primary' 
+                    : darkMode ? 'bg-dark-bg' : 'bg-brand-cream'
+                }`}
+              >
+                <p className={`text-xs font-bold ${t.active ? 'text-brand-primary' : darkMode ? 'text-dark-muted' : 'text-slate-600'}`}>{t.tier}</p>
+                <p className={`text-sm font-bold mt-1 ${darkMode ? 'text-dark-text' : 'text-slate-700'}`}>{t.discount}</p>
+                <p className={`text-xs ${darkMode ? 'text-dark-muted' : 'text-slate-600'}`}>{t.spend}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Analytics Section */}
+      <div className="grid gap-6 lg:grid-cols-3">
         {/* Orders Stats Card */}
-        <div className={`group rounded-2xl lg:rounded-3xl p-6 border shadow-lg transition-all duration-700 h-full flex flex-col ${
+        <div className={`group rounded-2xl lg:rounded-3xl p-6 border shadow-lg transition-all duration-700 ${
           darkMode 
             ? 'bg-dark-card border-dark-border hover:border-brand-secondary/40' 
-            : 'bg-gradient-to-br from-white to-slate-50 border-slate-100 hover:shadow-xl hover:border-brand-secondary/30'
+            : 'bg-gradient-to-br from-white to-slate-50 border-brand-primary/10 hover:shadow-xl hover:border-brand-secondary/30'
         } ${
           isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
-        }`} style={{ transitionDelay: "100ms" }}>
+        }`} style={{ transitionDelay: "150ms" }}>
           <div className="flex items-start justify-between mb-6">
             <div>
-              <p className={`text-xs uppercase tracking-[0.4em] font-semibold ${darkMode ? 'text-dark-muted' : 'text-slate-400'}`}>Orders</p>
-              <h2 className={`mt-3 text-5xl font-black transition-colors group-hover:text-brand-secondary ${
+              <p className={`text-xs uppercase tracking-[0.3em] font-semibold ${darkMode ? 'text-dark-muted' : 'text-slate-600'}`}>Total Orders</p>
+              <h2 className={`mt-2 text-4xl sm:text-5xl font-black transition-colors group-hover:text-brand-secondary ${
                 darkMode ? 'text-dark-text' : 'text-slate-900'
               }`}>{list.length}</h2>
-              <p className={`mt-2 text-sm font-medium ${darkMode ? 'text-dark-muted' : 'text-slate-500'}`}>Total orders placed</p>
+              <p className={`mt-1 text-sm font-medium ${darkMode ? 'text-dark-muted' : 'text-brand-slate'}`}>
+                {analytics.deliveredCount} delivered
+              </p>
             </div>
-            <div className={`flex items-center justify-center transition-transform w-16 h-16 rounded-2xl group-hover:scale-110 ${
+            <div className={`flex items-center justify-center transition-transform w-14 h-14 rounded-2xl group-hover:scale-110 ${
               darkMode ? 'bg-brand-secondary/20' : 'bg-gradient-to-br from-brand-secondary/20 to-brand-secondary/5'
             }`}>
-              <ShoppingBagIcon sx={{ fontSize: 36 }} className="text-brand-secondary" />
+              <ShoppingBagIcon sx={{ fontSize: 32 }} className="text-brand-secondary" />
             </div>
           </div>
           
           {/* Quick Stats */}
-          <div className="flex-1">
-            <div className="grid grid-cols-2 gap-4">
-              <div className={`p-4 rounded-xl ${darkMode ? 'bg-dark-bg' : 'bg-slate-50'}`}>
-                <p className={`text-xs font-semibold uppercase tracking-wider ${darkMode ? 'text-dark-muted' : 'text-slate-400'}`}>Pending</p>
-                <p className={`mt-1 text-2xl font-bold ${darkMode ? 'text-yellow-400' : 'text-yellow-600'}`}>
-                  {list.filter(o => o.status === 'pending' || o.status === 'processing').length}
-                </p>
-              </div>
-              <div className={`p-4 rounded-xl ${darkMode ? 'bg-dark-bg' : 'bg-slate-50'}`}>
-                <p className={`text-xs font-semibold uppercase tracking-wider ${darkMode ? 'text-dark-muted' : 'text-slate-400'}`}>Delivered</p>
-                <p className={`mt-1 text-2xl font-bold ${darkMode ? 'text-green-400' : 'text-green-600'}`}>
-                  {list.filter(o => o.status === 'delivered').length}
-                </p>
-              </div>
-              <div className={`p-4 rounded-xl ${darkMode ? 'bg-dark-bg' : 'bg-slate-50'}`}>
-                <p className={`text-xs font-semibold uppercase tracking-wider ${darkMode ? 'text-dark-muted' : 'text-slate-400'}`}>Shipped</p>
-                <p className={`mt-1 text-2xl font-bold ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>
-                  {list.filter(o => o.status === 'shipped').length}
-                </p>
-              </div>
-              <div className={`p-4 rounded-xl ${darkMode ? 'bg-dark-bg' : 'bg-slate-50'}`}>
-                <p className={`text-xs font-semibold uppercase tracking-wider ${darkMode ? 'text-dark-muted' : 'text-slate-400'}`}>Total Spent</p>
-                <p className={`mt-1 text-lg font-bold text-brand-primary`}>
-                  ₹{list.reduce((sum, o) => sum + (o.totalAmount || 0), 0).toLocaleString()}
-                </p>
-              </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div className={`p-3 rounded-2xl ${darkMode ? 'bg-dark-bg' : 'bg-brand-cream'}`}>
+              <p className={`text-xs font-semibold uppercase tracking-wider ${darkMode ? 'text-dark-muted' : 'text-slate-600'}`}>Pending</p>
+              <p className={`mt-1 text-xl font-bold ${darkMode ? 'text-yellow-400' : 'text-yellow-600'}`}>
+                {list.filter(o => (o.orderStatus || o.status) === 'pending' || (o.orderStatus || o.status) === 'processing').length}
+              </p>
             </div>
+            <div className={`p-3 rounded-2xl ${darkMode ? 'bg-dark-bg' : 'bg-brand-cream'}`}>
+              <p className={`text-xs font-semibold uppercase tracking-wider ${darkMode ? 'text-dark-muted' : 'text-slate-600'}`}>Shipped</p>
+              <p className={`mt-1 text-xl font-bold ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>
+                {list.filter(o => (o.orderStatus || o.status) === 'shipped').length}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Total Spent Card */}
+        <div className={`group rounded-2xl lg:rounded-3xl p-6 border shadow-lg transition-all duration-700 ${
+          darkMode 
+            ? 'bg-dark-card border-dark-border hover:border-brand-primary/40' 
+            : 'bg-gradient-to-br from-white to-slate-50 border-brand-primary/10 hover:shadow-xl hover:border-brand-primary/30'
+        } ${
+          isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
+        }`} style={{ transitionDelay: "200ms" }}>
+          <div className="flex items-start justify-between mb-6">
+            <div>
+              <p className={`text-xs uppercase tracking-[0.3em] font-semibold ${darkMode ? 'text-dark-muted' : 'text-slate-600'}`}>Total Spent</p>
+              <h2 className={`mt-2 text-3xl sm:text-4xl font-black transition-colors group-hover:text-brand-primary ${
+                darkMode ? 'text-dark-text' : 'text-slate-900'
+              }`}>₹{analytics.totalSpent.toLocaleString()}</h2>
+              <p className={`mt-1 text-sm font-medium ${darkMode ? 'text-dark-muted' : 'text-brand-slate'}`}>
+                Avg: ₹{Math.round(analytics.avgOrderValue).toLocaleString()}/order
+              </p>
+            </div>
+            <div className={`flex items-center justify-center transition-transform w-14 h-14 rounded-2xl group-hover:scale-110 ${
+              darkMode ? 'bg-brand-primary/20' : 'bg-gradient-to-br from-brand-primary/20 to-brand-gold/20'
+            }`}>
+              <TrendingUpIcon sx={{ fontSize: 32 }} className="text-brand-primary" />
+            </div>
+          </div>
+
+          {/* Mini Spending Chart */}
+          <div className="mt-4">
+            <p className={`text-xs font-semibold uppercase tracking-wider mb-3 ${darkMode ? 'text-dark-muted' : 'text-slate-600'}`}>Last 6 Months</p>
+            <div className="flex items-end h-16 gap-1">
+              {Object.entries(analytics.monthlySpending).map(([month, amount], i) => {
+                const maxSpend = Math.max(...Object.values(analytics.monthlySpending), 1);
+                const height = (amount / maxSpend) * 100;
+                return (
+                  <div key={month} className="flex flex-col items-center flex-1 gap-1">
+                    <div 
+                      className="w-full transition-all duration-500 rounded-t-sm bg-gradient-to-t from-brand-primary to-brand-gold"
+                      style={{ height: `${Math.max(height, 4)}%` }}
+                    ></div>
+                    <span className={`text-[10px] font-medium ${darkMode ? 'text-dark-muted' : 'text-slate-600'}`}>{month}</span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
+        {/* Top Categories Card */}
+        <div className={`group rounded-2xl lg:rounded-3xl p-6 border shadow-lg transition-all duration-700 ${
+          darkMode 
+            ? 'bg-dark-card border-dark-border hover:border-brand-gold/40' 
+            : 'bg-gradient-to-br from-white to-slate-50 border-brand-primary/10 hover:shadow-xl hover:border-brand-gold/30'
+        } ${
+          isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
+        }`} style={{ transitionDelay: "250ms" }}>
+          <div className="flex items-start justify-between mb-6">
+            <div>
+              <p className={`text-xs uppercase tracking-[0.3em] font-semibold ${darkMode ? 'text-dark-muted' : 'text-slate-600'}`}>Top Categories</p>
+              <h2 className={`mt-2 text-xl font-bold ${darkMode ? 'text-dark-text' : 'text-slate-900'}`}>
+                Your Favorites
+              </h2>
+            </div>
+            <div className={`flex items-center justify-center transition-transform w-14 h-14 rounded-2xl group-hover:scale-110 ${
+              darkMode ? 'bg-brand-gold/20' : 'bg-gradient-to-br from-brand-gold/20 to-brand-primary/10'
+            }`}>
+              <CategoryIcon sx={{ fontSize: 32 }} className="text-brand-gold" />
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            {analytics.topCategories.length > 0 ? (
+              analytics.topCategories.map(([category, count], index) => (
+                <div key={category} className={`flex items-center gap-3 p-3 rounded-2xl ${darkMode ? 'bg-dark-bg' : 'bg-brand-cream'}`}>
+                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold text-sm ${
+                    index === 0 ? 'bg-gradient-to-br from-yellow-400 to-yellow-600' :
+                    index === 1 ? 'bg-gradient-to-br from-slate-300 to-slate-500' :
+                    'bg-gradient-to-br from-amber-600 to-amber-800'
+                  }`}>
+                    {index + 1}
+                  </div>
+                  <div className="flex-1">
+                    <p className={`font-semibold ${darkMode ? 'text-dark-text' : 'text-slate-700'}`}>{category}</p>
+                    <p className={`text-xs ${darkMode ? 'text-dark-muted' : 'text-slate-600'}`}>{count} items purchased</p>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className={`p-4 text-center rounded-2xl ${darkMode ? 'bg-dark-bg' : 'bg-brand-cream'}`}>
+                <p className={`text-sm ${darkMode ? 'text-dark-muted' : 'text-brand-slate'}`}>No purchases yet</p>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -388,35 +664,35 @@ const UserDashboard = () => {
         <div className={`rounded-2xl lg:rounded-3xl border shadow-lg p-5 lg:p-8 transition-all duration-700 ${
           darkMode 
             ? 'bg-dark-card border-dark-border' 
-            : 'bg-gradient-to-br from-white to-slate-50 border-slate-100'
+            : 'bg-gradient-to-br from-white to-slate-50 border-brand-primary/10'
         } ${
           isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
         }`} style={{ transitionDelay: "200ms" }}>
           <div className="mb-6">
-            <p className={`text-xs uppercase tracking-[0.4em] font-semibold ${darkMode ? 'text-dark-muted' : 'text-slate-400'}`}>Recent Activity</p>
+            <p className={`text-xs uppercase tracking-[0.4em] font-semibold ${darkMode ? 'text-dark-muted' : 'text-slate-600'}`}>Recent Activity</p>
             <h3 className={`mt-1 text-xl lg:text-2xl font-bold ${darkMode ? 'text-dark-text' : 'text-slate-900'}`}>Your Orders</h3>
           </div>
           <div className="space-y-3">
             {list.slice(0, 5).map((order, index) => (
               <div
                 key={order._id}
-                className={`flex items-center gap-4 p-4 rounded-xl lg:rounded-2xl transition-all duration-500 border ${
+                className={`flex items-center gap-4 p-4 rounded-2xl lg:rounded-2xl transition-all duration-500 border ${
                   darkMode 
                     ? 'bg-dark-bg hover:bg-dark-hover border-dark-border hover:border-brand-primary/30' 
-                    : 'bg-slate-50 hover:bg-slate-100 border-slate-100 hover:border-brand-primary/20'
+                    : 'bg-slate-50 hover:bg-slate-100 border-brand-primary/10 hover:border-brand-primary/20'
                 } ${
                   isVisible ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-5"
                 }`}
                 style={{ transitionDelay: `${200 + index * 50}ms` }}
               >
-                <div className={`flex items-center justify-center flex-shrink-0 w-12 h-12 transition-transform rounded-xl group-hover:scale-110 ${
+                <div className={`flex items-center justify-center flex-shrink-0 w-12 h-12 transition-transform rounded-2xl group-hover:scale-110 ${
                   darkMode ? 'bg-brand-primary/20' : 'bg-gradient-to-br from-brand-primary/20 to-brand-gold/20'
                 }`}>
                   <ShoppingBagIcon sx={{ fontSize: 24 }} className="text-brand-primary" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className={`font-semibold ${darkMode ? 'text-dark-text' : 'text-slate-800'}`}>Order #{order._id?.slice(-6).toUpperCase()}</p>
-                  <p className={`text-sm truncate ${darkMode ? 'text-dark-muted' : 'text-slate-500'}`}>
+                  <p className={`font-semibold ${darkMode ? 'text-dark-text' : 'text-brand-dark'}`}>Order #{order._id?.slice(-6).toUpperCase()}</p>
+                  <p className={`text-sm truncate ${darkMode ? 'text-dark-muted' : 'text-brand-slate'}`}>
                     {new Date(order.createdAt).toLocaleDateString('en-IN', {
                       month: 'short',
                       day: 'numeric',
@@ -427,15 +703,15 @@ const UserDashboard = () => {
                 <div className="flex-shrink-0 text-right">
                   <p className="font-bold text-brand-primary">₹ {order.totalAmount?.toLocaleString()}</p>
                   <span className={`text-xs font-semibold px-2 py-1 rounded-full inline-block mt-1 ${
-                    order.status === 'delivered' 
+                    (order.orderStatus || order.status) === 'delivered' 
                       ? darkMode ? 'bg-green-500/20 text-green-400' : 'bg-green-100 text-green-600'
-                      : order.status === 'pending' 
+                      : (order.orderStatus || order.status) === 'pending' 
                         ? darkMode ? 'bg-yellow-500/20 text-yellow-400' : 'bg-yellow-100 text-yellow-600'
-                        : order.status === 'shipped' 
+                        : (order.orderStatus || order.status) === 'shipped' 
                           ? darkMode ? 'bg-blue-500/20 text-blue-400' : 'bg-blue-100 text-blue-600'
                           : darkMode ? 'bg-dark-hover text-dark-muted' : 'bg-slate-100 text-slate-600'
                   }`}>
-                    {order.status?.charAt(0).toUpperCase() + order.status?.slice(1)}
+                    {(order.orderStatus || order.status)?.charAt(0).toUpperCase() + (order.orderStatus || order.status)?.slice(1)}
                   </span>
                 </div>
               </div>
@@ -454,16 +730,16 @@ const UserDashboard = () => {
             onClick={(e) => e.stopPropagation()}
           >
             <div className={`sticky top-0 z-10 flex items-center justify-between px-6 py-5 border-b rounded-t-2xl lg:rounded-t-3xl ${
-              darkMode ? 'bg-dark-card border-dark-border' : 'bg-white border-slate-100'
+              darkMode ? 'bg-dark-card border-dark-border' : 'bg-white border-brand-primary/10'
             }`}>
               <div>
-                <h2 className={`text-xl font-bold ${darkMode ? 'text-dark-text' : 'text-slate-800'}`}>Edit Profile</h2>
-                <p className={`mt-1 text-sm ${darkMode ? 'text-dark-muted' : 'text-slate-500'}`}>Update your personal information</p>
+                <h2 className={`text-xl font-bold ${darkMode ? 'text-dark-text' : 'text-brand-dark'}`}>Edit Profile</h2>
+                <p className={`mt-1 text-sm ${darkMode ? 'text-dark-muted' : 'text-brand-slate'}`}>Update your personal information</p>
               </div>
               <button
                 onClick={closeEditModal}
-                className={`p-2 transition-colors rounded-xl ${
-                  darkMode ? 'hover:bg-dark-hover text-dark-muted' : 'hover:bg-slate-100 text-slate-500'
+                className={`p-2 transition-colors rounded-2xl ${
+                  darkMode ? 'hover:bg-dark-hover text-dark-muted' : 'hover:bg-slate-100 text-brand-slate'
                 }`}
               >
                 <CloseIcon sx={{ fontSize: 24 }} />
@@ -482,10 +758,10 @@ const UserDashboard = () => {
                   value={editForm.name}
                   onChange={handleChange}
                   placeholder="Your full name"
-                  className={`w-full px-4 py-3 transition-all border-2 outline-none rounded-xl ${
+                  className={`w-full px-4 py-3 transition-all border-2 outline-none rounded-2xl ${
                     darkMode 
                       ? 'bg-dark-bg border-dark-border text-dark-text placeholder-dark-muted focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/20' 
-                      : 'bg-white border-slate-200 text-slate-800 placeholder-slate-400 focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/20'
+                      : 'bg-white border-slate-200 text-brand-dark placeholder-slate-400 focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/20'
                   }`}
                   required
                 />
@@ -502,10 +778,10 @@ const UserDashboard = () => {
                   value={editForm.phone}
                   onChange={handleChange}
                   placeholder="Your phone number"
-                  className={`w-full px-4 py-3 transition-all border-2 outline-none rounded-xl ${
+                  className={`w-full px-4 py-3 transition-all border-2 outline-none rounded-2xl ${
                     darkMode 
                       ? 'bg-dark-bg border-dark-border text-dark-text placeholder-dark-muted focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/20' 
-                      : 'bg-white border-slate-200 text-slate-800 placeholder-slate-400 focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/20'
+                      : 'bg-white border-slate-200 text-brand-dark placeholder-slate-400 focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/20'
                   }`}
                 />
               </div>
@@ -522,10 +798,10 @@ const UserDashboard = () => {
                   value={editForm.address.street}
                   onChange={handleChange}
                   placeholder="Street address"
-                  className={`w-full px-4 py-3 transition-all border-2 outline-none rounded-xl ${
+                  className={`w-full px-4 py-3 transition-all border-2 outline-none rounded-2xl ${
                     darkMode 
                       ? 'bg-dark-bg border-dark-border text-dark-text placeholder-dark-muted focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/20' 
-                      : 'bg-white border-slate-200 text-slate-800 placeholder-slate-400 focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/20'
+                      : 'bg-white border-slate-200 text-brand-dark placeholder-slate-400 focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/20'
                   }`}
                 />
 
@@ -535,10 +811,10 @@ const UserDashboard = () => {
                     value={editForm.address.city}
                     onChange={handleChange}
                     placeholder="City"
-                    className={`w-full px-4 py-3 transition-all border-2 outline-none rounded-xl ${
+                    className={`w-full px-4 py-3 transition-all border-2 outline-none rounded-2xl ${
                       darkMode 
                         ? 'bg-dark-bg border-dark-border text-dark-text placeholder-dark-muted focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/20' 
-                        : 'bg-white border-slate-200 text-slate-800 placeholder-slate-400 focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/20'
+                        : 'bg-white border-slate-200 text-brand-dark placeholder-slate-400 focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/20'
                     }`}
                   />
                   <input
@@ -546,10 +822,10 @@ const UserDashboard = () => {
                     value={editForm.address.state}
                     onChange={handleChange}
                     placeholder="State"
-                    className={`w-full px-4 py-3 transition-all border-2 outline-none rounded-xl ${
+                    className={`w-full px-4 py-3 transition-all border-2 outline-none rounded-2xl ${
                       darkMode 
                         ? 'bg-dark-bg border-dark-border text-dark-text placeholder-dark-muted focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/20' 
-                        : 'bg-white border-slate-200 text-slate-800 placeholder-slate-400 focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/20'
+                        : 'bg-white border-slate-200 text-brand-dark placeholder-slate-400 focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/20'
                     }`}
                   />
                 </div>
@@ -560,10 +836,10 @@ const UserDashboard = () => {
                     value={editForm.address.pincode}
                     onChange={handleChange}
                     placeholder="Pincode"
-                    className={`w-full px-4 py-3 transition-all border-2 outline-none rounded-xl ${
+                    className={`w-full px-4 py-3 transition-all border-2 outline-none rounded-2xl ${
                       darkMode 
                         ? 'bg-dark-bg border-dark-border text-dark-text placeholder-dark-muted focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/20' 
-                        : 'bg-white border-slate-200 text-slate-800 placeholder-slate-400 focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/20'
+                        : 'bg-white border-slate-200 text-brand-dark placeholder-slate-400 focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/20'
                     }`}
                   />
                   <input
@@ -571,20 +847,20 @@ const UserDashboard = () => {
                     value={editForm.address.country}
                     onChange={handleChange}
                     placeholder="Country"
-                    className={`w-full px-4 py-3 transition-all border-2 outline-none rounded-xl ${
+                    className={`w-full px-4 py-3 transition-all border-2 outline-none rounded-2xl ${
                       darkMode 
                         ? 'bg-dark-bg border-dark-border text-dark-text placeholder-dark-muted focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/20' 
-                        : 'bg-white border-slate-200 text-slate-800 placeholder-slate-400 focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/20'
+                        : 'bg-white border-slate-200 text-brand-dark placeholder-slate-400 focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/20'
                     }`}
                   />
                 </div>
               </div>
 
-              <div className={`flex items-center justify-end gap-4 pt-4 border-t ${darkMode ? 'border-dark-border' : 'border-slate-100'}`}>
+              <div className={`flex items-center justify-end gap-4 pt-4 border-t ${darkMode ? 'border-dark-border' : 'border-brand-primary/10'}`}>
                 <button
                   type="button"
                   onClick={closeEditModal}
-                  className={`px-5 py-2.5 font-semibold rounded-xl transition-colors ${
+                  className={`px-5 py-2.5 font-semibold rounded-2xl transition-colors ${
                     darkMode ? 'text-dark-text hover:bg-dark-hover' : 'text-slate-600 hover:bg-slate-100'
                   }`}
                 >
@@ -593,7 +869,7 @@ const UserDashboard = () => {
                 <button
                   type="submit"
                   disabled={saving}
-                  className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-brand-primary to-brand-gold text-white font-semibold rounded-xl hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-brand-primary to-brand-gold text-white font-semibold rounded-2xl hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {saving ? (
                     <>
@@ -633,7 +909,7 @@ const UserDashboard = () => {
               </div>
               <button
                 onClick={closeAvatarModal}
-                className="p-2 text-white transition-colors hover:bg-white/20 rounded-xl"
+                className="p-2 text-white transition-colors hover:bg-white/20 rounded-2xl"
               >
                 <CloseIcon sx={{ fontSize: 24 }} />
               </button>
@@ -643,7 +919,7 @@ const UserDashboard = () => {
             <div className={`p-6 border-b ${
               darkMode 
                 ? 'bg-dark-bg border-dark-border' 
-                : 'bg-gradient-to-br from-slate-50 to-white border-slate-100'
+                : 'bg-gradient-to-br from-slate-50 to-white border-brand-primary/10'
             }`}>
               <div className="flex flex-col items-center gap-4 sm:flex-row">
                 <div className="relative">
@@ -652,6 +928,12 @@ const UserDashboard = () => {
                       <img 
                         src={selectedAvatar} 
                         alt="Selected avatar" 
+                        className="object-cover w-full h-full"
+                      />
+                    ) : user?.customAvatar ? (
+                      <img 
+                        src={user.customAvatar} 
+                        alt={user.name} 
                         className="object-cover w-full h-full"
                       />
                     ) : user?.avatar ? (
@@ -666,16 +948,16 @@ const UserDashboard = () => {
                       </div>
                     )}
                   </div>
-                  {selectedAvatar && selectedAvatar !== user?.avatar && (
+                  {selectedAvatar && selectedAvatar !== user?.customAvatar && selectedAvatar !== user?.avatar && (
                     <span className="absolute flex items-center justify-center w-6 h-6 bg-green-500 rounded-full shadow-lg -top-1 -right-1">
                       <CheckCircleIcon sx={{ fontSize: 16 }} className="text-white" />
                     </span>
                   )}
                 </div>
                 <div className="text-center sm:text-left">
-                  <p className={`text-sm font-medium ${darkMode ? 'text-dark-muted' : 'text-slate-500'}`}>Preview</p>
+                  <p className={`text-sm font-medium ${darkMode ? 'text-dark-muted' : 'text-brand-slate'}`}>Preview</p>
                   <p className={`text-lg font-bold ${darkMode ? 'text-dark-text' : 'text-slate-900'}`}>{user?.name}</p>
-                  {selectedAvatar && selectedAvatar !== user?.avatar && (
+                  {selectedAvatar && selectedAvatar !== user?.customAvatar && selectedAvatar !== user?.avatar && (
                     <p className="mt-1 text-sm font-bold text-brand-primary animate-pulse">New avatar selected!</p>
                   )}
                 </div>
@@ -706,7 +988,7 @@ const UserDashboard = () => {
                     <img 
                       src={avatar.url} 
                       alt={avatar.name}
-                      className="object-cover w-full aspect-square rounded-xl"
+                      className="object-cover w-full aspect-square rounded-2xl"
                     />
                     {selectedAvatar === avatar.url && (
                       <span className="absolute flex items-center justify-center w-5 h-5 rounded-full shadow-lg -top-1 -right-1 bg-brand-primary">
@@ -723,12 +1005,12 @@ const UserDashboard = () => {
 
             {/* Modal Footer */}
             <div className={`sticky bottom-0 flex flex-col items-center justify-end gap-3 px-6 py-4 border-t sm:flex-row ${
-              darkMode ? 'bg-dark-card border-dark-border' : 'bg-white border-slate-100'
+              darkMode ? 'bg-dark-card border-dark-border' : 'bg-white border-brand-primary/10'
             }`}>
               <button
                 type="button"
                 onClick={closeAvatarModal}
-                className={`w-full sm:w-auto px-6 py-2.5 font-bold rounded-xl transition-colors ${
+                className={`w-full sm:w-auto px-6 py-2.5 font-bold rounded-2xl transition-colors ${
                   darkMode ? 'text-dark-text hover:bg-dark-hover' : 'text-slate-600 hover:bg-slate-100'
                 }`}
               >
@@ -736,8 +1018,8 @@ const UserDashboard = () => {
               </button>
               <button
                 onClick={handleAvatarSave}
-                disabled={savingAvatar || !selectedAvatar || selectedAvatar === user?.avatar}
-                className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-2.5 bg-gradient-to-r from-brand-primary to-brand-gold text-white font-bold rounded-xl hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-none"
+                disabled={savingAvatar || !selectedAvatar || (selectedAvatar === user?.customAvatar || selectedAvatar === user?.avatar)}
+                className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-2.5 bg-gradient-to-r from-brand-primary to-brand-gold text-white font-bold rounded-2xl hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-none"
               >
                 {savingAvatar ? (
                   <>
@@ -755,8 +1037,10 @@ const UserDashboard = () => {
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 };
 
 export default UserDashboard;
+

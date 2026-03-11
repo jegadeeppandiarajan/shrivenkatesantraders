@@ -16,7 +16,8 @@ import LocationOnIcon from "@mui/icons-material/LocationOn";
 import PhoneIcon from "@mui/icons-material/Phone";
 import PersonIcon from "@mui/icons-material/Person";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+// Get base URL for images (strip /api suffix if present)
+const API_URL = (import.meta.env.VITE_API_URL || "http://localhost:5000/api").replace(/\/api\/?$/, "");
 
 const timelineMap = ["pending", "confirmed", "processing", "shipped", "out_for_delivery", "delivered"];
 
@@ -119,15 +120,15 @@ const OrderTracking = () => {
         <div className="mb-8">
           <button
             onClick={() => navigate("/orders")}
-            className="flex items-center gap-2 text-slate-500 hover:text-brand-primary transition-colors mb-4"
+            className="flex items-center gap-2 text-brand-slate hover:text-brand-primary transition-colors mb-4"
           >
             <ArrowBackIcon sx={{ fontSize: 20 }} />
             <span className="text-sm font-medium">Back to Orders</span>
           </button>
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
-              <h1 className="text-3xl md:text-4xl font-bold text-slate-800">Order Details</h1>
-              <p className="text-slate-500 mt-1">Track your order status</p>
+              <h1 className="text-3xl md:text-4xl font-bold text-brand-dark">Order Details</h1>
+              <p className="text-brand-slate mt-1">Track your order status</p>
             </div>
             <div className="flex items-center gap-3">
               <div className={`px-4 py-2 rounded-full text-sm font-semibold bg-${statusConfig[current.orderStatus]?.color || "slate"}-100 text-${statusConfig[current.orderStatus]?.color || "slate"}-700`}>
@@ -141,22 +142,22 @@ const OrderTracking = () => {
         <div className="bg-white rounded-2xl shadow-sm p-6 mb-8">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="flex items-center gap-4">
-              <div className="w-14 h-14 bg-gradient-to-br from-brand-primary/10 to-brand-secondary/10 rounded-xl flex items-center justify-center">
+              <div className="w-14 h-14 bg-gradient-to-br from-brand-primary/10 to-brand-secondary/10 rounded-2xl flex items-center justify-center">
                 <ReceiptLongIcon className="text-brand-primary" sx={{ fontSize: 28 }} />
               </div>
               <div>
-                <p className="text-sm text-slate-500">Order Number</p>
-                <h2 className="text-xl font-bold text-slate-800">{current.orderNumber}</h2>
+                <p className="text-sm text-brand-slate">Order Number</p>
+                <h2 className="text-xl font-bold text-brand-dark">{current.orderNumber}</h2>
               </div>
             </div>
             <div className="flex items-center gap-6">
               <div className="text-right">
-                <p className="text-sm text-slate-500">Order Date</p>
-                <p className="font-semibold text-slate-800">{formatDate(current.createdAt)}</p>
+                <p className="text-sm text-brand-slate">Order Date</p>
+                <p className="font-semibold text-brand-dark">{formatDate(current.createdAt)}</p>
               </div>
               <div className="h-10 w-px bg-slate-200"></div>
               <div className="text-right">
-                <p className="text-sm text-slate-500">Total Amount</p>
+                <p className="text-sm text-brand-slate">Total Amount</p>
                 <p className="text-xl font-bold text-brand-primary">₹{current.totalAmount.toLocaleString()}</p>
               </div>
             </div>
@@ -165,7 +166,7 @@ const OrderTracking = () => {
 
         {/* Progress Tracker */}
         <div className="bg-white rounded-2xl shadow-sm p-6 mb-8">
-          <h3 className="text-lg font-bold text-slate-800 mb-6">Delivery Progress</h3>
+          <h3 className="text-lg font-bold text-brand-dark mb-6">Delivery Progress</h3>
           <div className="relative">
             {/* Progress Line */}
             <div className="absolute top-5 left-0 right-0 h-1 bg-slate-200 rounded-full">
@@ -193,7 +194,7 @@ const OrderTracking = () => {
                     >
                       <IconComponent sx={{ fontSize: 20 }} />
                     </div>
-                    <p className={`text-xs font-medium mt-3 text-center max-w-[80px] ${isActive ? "text-slate-800" : "text-slate-400"}`}>
+                    <p className={`text-xs font-medium mt-3 text-center max-w-[80px] ${isActive ? "text-brand-dark" : "text-slate-400"}`}>
                       {config?.label || stage.replace(/_/g, " ")}
                     </p>
                   </div>
@@ -206,7 +207,7 @@ const OrderTracking = () => {
         <div className="grid lg:grid-cols-2 gap-8">
           {/* Timeline */}
           <div className="bg-white rounded-2xl shadow-sm p-6">
-            <h3 className="text-lg font-bold text-slate-800 mb-6">Order Timeline</h3>
+            <h3 className="text-lg font-bold text-brand-dark mb-6">Order Timeline</h3>
             <div className="relative">
               {uniqueTimeline.map((entry, index) => {
                 const config = statusConfig[entry.status];
@@ -226,10 +227,10 @@ const OrderTracking = () => {
 
                     {/* Content */}
                     <div className="flex-1 pb-4">
-                      <p className="font-semibold text-slate-800 capitalize">
+                      <p className="font-semibold text-brand-dark capitalize">
                         {config?.label || entry.status.replace(/_/g, " ")}
                       </p>
-                      <div className="flex items-center gap-2 mt-1 text-sm text-slate-500">
+                      <div className="flex items-center gap-2 mt-1 text-sm text-brand-slate">
                         <AccessTimeIcon sx={{ fontSize: 14 }} />
                         {formatDate(entry.timestamp)}
                       </div>
@@ -250,7 +251,7 @@ const OrderTracking = () => {
             {/* Shipping Address */}
             {current.shippingAddress && (
               <div className="bg-white rounded-2xl shadow-sm p-6">
-                <h3 className="text-lg font-bold text-slate-800 mb-4">Shipping Address</h3>
+                <h3 className="text-lg font-bold text-brand-dark mb-4">Shipping Address</h3>
                 <div className="space-y-3">
                   <div className="flex items-center gap-3 text-slate-600">
                     <PersonIcon sx={{ fontSize: 20 }} className="text-slate-400" />
@@ -274,10 +275,10 @@ const OrderTracking = () => {
 
             {/* Order Items */}
             <div className="bg-white rounded-2xl shadow-sm p-6">
-              <h3 className="text-lg font-bold text-slate-800 mb-4">Order Items</h3>
+              <h3 className="text-lg font-bold text-brand-dark mb-4">Order Items</h3>
               <div className="space-y-4">
                 {uniqueItems.map((item, idx) => (
-                  <div key={item.product?._id || idx} className="flex items-center gap-4 p-3 bg-slate-50 rounded-xl">
+                  <div key={item.product?._id || idx} className="flex items-center gap-4 p-3 bg-slate-50 rounded-2xl">
                     <div className="w-16 h-16 bg-white rounded-lg overflow-hidden flex-shrink-0">
                       {getProductImage(item) ? (
                         <img
@@ -292,12 +293,12 @@ const OrderTracking = () => {
                       )}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h4 className="font-medium text-slate-800 text-sm line-clamp-1">
+                      <h4 className="font-medium text-brand-dark text-sm line-clamp-1">
                         {item.product?.name || item.name || "Product"}
                       </h4>
-                      <p className="text-xs text-slate-500">Qty: {item.quantity}</p>
+                      <p className="text-xs text-brand-slate">Qty: {item.quantity}</p>
                     </div>
-                    <p className="font-semibold text-slate-800 text-sm">
+                    <p className="font-semibold text-brand-dark text-sm">
                       ₹{(item.price * item.quantity).toLocaleString()}
                     </p>
                   </div>
@@ -314,7 +315,7 @@ const OrderTracking = () => {
                   <span>Shipping</span>
                   <span className="text-green-600">Free</span>
                 </div>
-                <div className="flex justify-between font-bold text-slate-800 text-lg pt-2 border-t border-slate-200">
+                <div className="flex justify-between font-bold text-brand-dark text-lg pt-2 border-t border-slate-200">
                   <span>Total</span>
                   <span className="text-brand-primary">₹{current.totalAmount.toLocaleString()}</span>
                 </div>
@@ -328,3 +329,4 @@ const OrderTracking = () => {
 };
 
 export default OrderTracking;
+

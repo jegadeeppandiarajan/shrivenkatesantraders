@@ -1,4 +1,4 @@
-/******** Tailwind configuration for Shri Venkatesan Traders UI ********/
+/******** Tailwind configuration for Shri Venkatesan Traders UI - Industrial Theme ********/
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ["./index.html", "./src/**/*.{js,jsx}"],
@@ -7,26 +7,32 @@ export default {
     extend: {
       colors: {
         brand: {
-          primary: "#F59E0B", // Amber/Yellow
-          secondary: "#FBBF24", // Yellow
-          accent: "#FCD34D", // Light Yellow
-          dark: "#78350F", // Dark Brown
-          light: "#FFFBEB", // Cream Yellow
-          gold: "#D97706", // Gold
-          honey: "#F97316", // Orange-Yellow
-          sunshine: "#EAB308", // Sunshine Yellow
+          primary: "#D97706", // Industrial Orange/Copper
+          secondary: "#92400E", // Deep Amber
+          accent: "#F59E0B", // Warm Amber
+          dark: "#1C1C1C", // Charcoal Black
+          light: "#F5F5F4", // Warm White
+          slate: "#A8A29E", // Warm Gray
+          sky: "#292524", // Stone Dark
+          steel: "#78716C", // Stone Gray
+          cream: "#FAFAF9", // Stone 50
+          copper: "#EA580C", // Copper Orange
+          gold: "#D97706", // Rich Gold
+          honey: "#F59E0B", // Warm Honey
         },
         dark: {
-          bg: "#0F0F0F",
-          card: "#1A1A1A",
-          border: "#2A2A2A",
-          hover: "#252525",
-          text: "#E5E5E5",
-          muted: "#A3A3A3",
+          bg: "#0F0F0F", // Pure dark
+          card: "#1C1C1C", // Card dark
+          border: "#2A2A2A", // Subtle border
+          hover: "#262626", // Hover state
+          text: "#F5F5F4", // Light text
+          muted: "#A8A29E", // Muted text
         },
       },
       fontFamily: {
-        sans: ["'Space Grotesk'", "'Inter'", "sans-serif"],
+        sans: ["'Inter'", "system-ui", "sans-serif"],
+        display: ["'Inter'", "system-ui", "sans-serif"],
+        mono: ["'JetBrains Mono'", "'SF Mono'", "monospace"],
       },
       animation: {
         "gradient-x": "gradient-x 3s ease infinite",
@@ -98,8 +104,8 @@ export default {
           "100%": { transform: "translateX(-100%)" },
         },
         "pulse-glow": {
-          "0%, 100%": { boxShadow: "0 0 5px rgba(10, 92, 128, 0.3)" },
-          "50%": { boxShadow: "0 0 20px rgba(10, 92, 128, 0.6)" },
+          "0%, 100%": { boxShadow: "0 0 5px rgba(30, 58, 95, 0.3)" },
+          "50%": { boxShadow: "0 0 20px rgba(30, 58, 95, 0.6)" },
         },
         pulseScale: {
           "0%, 100%": { transform: "scale(1)", opacity: "1" },

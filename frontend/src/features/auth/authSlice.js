@@ -11,10 +11,10 @@ export const fetchCurrentUser = createAsyncThunk(
       return data.user;
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data?.message || "Unable to fetch user"
+        error.response?.data?.message || "Unable to fetch user",
       );
     }
-  }
+  },
 );
 
 export const registerUser = createAsyncThunk(
@@ -26,10 +26,10 @@ export const registerUser = createAsyncThunk(
       return data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data?.message || "Registration failed"
+        error.response?.data?.message || "Registration failed",
       );
     }
-  }
+  },
 );
 
 export const loginUser = createAsyncThunk(
@@ -41,10 +41,10 @@ export const loginUser = createAsyncThunk(
       return data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data?.message || "Login failed"
+        error.response?.data?.message || "Login failed",
       );
     }
-  }
+  },
 );
 
 export const adminLogin = createAsyncThunk(
@@ -56,10 +56,10 @@ export const adminLogin = createAsyncThunk(
       return data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data?.message || "Admin login failed"
+        error.response?.data?.message || "Admin login failed",
       );
     }
-  }
+  },
 );
 
 const authSlice = createSlice({
@@ -112,9 +112,13 @@ const authSlice = createSlice({
       })
       .addCase(fetchCurrentUser.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload;
+        // Don't set error for 401 - this is expected when not logged in
+        state.error = null;
         state.user = null;
+        state.token = null;
+        state.isAdmin = false;
         state.initialized = true;
+        localStorage.removeItem("svt_token");
       })
       // Register User
       .addCase(registerUser.pending, (state) => {
@@ -170,3 +174,4 @@ const authSlice = createSlice({
 export const { setToken, setUser, logoutSuccess, clearError } =
   authSlice.actions;
 export default authSlice.reducer;
+

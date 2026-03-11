@@ -127,7 +127,7 @@ const ManageUsers = () => {
         isVisible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-5"
       }`}>
         <div className="flex items-center gap-3">
-          <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
+          <div className={`w-10 h-10 rounded-2xl flex items-center justify-center ${
             darkMode ? 'bg-brand-primary/20' : 'bg-brand-primary/10'
           }`}>
             <GroupIcon className="text-brand-primary" />
@@ -137,13 +137,13 @@ const ManageUsers = () => {
               darkMode ? 'text-dark-text' : 'text-slate-900'
             }`}>User Management</h1>
             <p className={`text-sm ${
-              darkMode ? 'text-dark-muted' : 'text-slate-500'
+              darkMode ? 'text-dark-muted' : 'text-brand-slate'
             }`}>Manage user accounts, roles, and permissions</p>
           </div>
         </div>
         <button 
           onClick={fetchUsers}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${
+          className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl text-sm font-medium transition-all ${
             darkMode 
               ? 'bg-dark-hover text-dark-text hover:bg-dark-border' 
               : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
@@ -158,7 +158,7 @@ const ManageUsers = () => {
       <div className={`grid grid-cols-1 md:grid-cols-3 gap-4 transition-all duration-700 ${
         isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-5"
       }`} style={{ transitionDelay: "100ms" }}>
-        <div className={`rounded-xl p-5 shadow-lg ${
+        <div className={`rounded-2xl p-5 shadow-lg ${
           darkMode 
             ? 'bg-gradient-to-br from-blue-500/20 to-blue-600/10 border border-blue-500/20' 
             : 'bg-gradient-to-br from-blue-500 to-blue-600'
@@ -168,7 +168,7 @@ const ManageUsers = () => {
               <p className={`text-sm font-medium ${darkMode ? 'text-blue-400' : 'text-blue-100'}`}>Total Users</p>
               <p className={`text-3xl font-bold mt-1 ${darkMode ? 'text-blue-400' : 'text-white'}`}>{stats.total}</p>
             </div>
-            <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
+            <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${
               darkMode ? 'bg-blue-500/20' : 'bg-white/20'
             }`}>
               <GroupIcon sx={{ fontSize: 24 }} className={darkMode ? 'text-blue-400' : 'text-white'} />
@@ -176,7 +176,7 @@ const ManageUsers = () => {
           </div>
         </div>
         
-        <div className={`rounded-xl p-5 shadow-lg ${
+        <div className={`rounded-2xl p-5 shadow-lg ${
           darkMode 
             ? 'bg-gradient-to-br from-purple-500/20 to-purple-600/10 border border-purple-500/20' 
             : 'bg-gradient-to-br from-purple-500 to-purple-600'
@@ -186,7 +186,7 @@ const ManageUsers = () => {
               <p className={`text-sm font-medium ${darkMode ? 'text-purple-400' : 'text-purple-100'}`}>Administrators</p>
               <p className={`text-3xl font-bold mt-1 ${darkMode ? 'text-purple-400' : 'text-white'}`}>{stats.admins}</p>
             </div>
-            <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
+            <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${
               darkMode ? 'bg-purple-500/20' : 'bg-white/20'
             }`}>
               <AdminPanelSettingsIcon sx={{ fontSize: 24 }} className={darkMode ? 'text-purple-400' : 'text-white'} />
@@ -194,7 +194,7 @@ const ManageUsers = () => {
           </div>
         </div>
         
-        <div className={`rounded-xl p-5 shadow-lg ${
+        <div className={`rounded-2xl p-5 shadow-lg ${
           darkMode 
             ? 'bg-gradient-to-br from-green-500/20 to-green-600/10 border border-green-500/20' 
             : 'bg-gradient-to-br from-green-500 to-green-600'
@@ -204,7 +204,7 @@ const ManageUsers = () => {
               <p className={`text-sm font-medium ${darkMode ? 'text-green-400' : 'text-green-100'}`}>Active Users</p>
               <p className={`text-3xl font-bold mt-1 ${darkMode ? 'text-green-400' : 'text-white'}`}>{stats.active}</p>
             </div>
-            <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
+            <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${
               darkMode ? 'bg-green-500/20' : 'bg-white/20'
             }`}>
               <CheckCircleIcon sx={{ fontSize: 24 }} className={darkMode ? 'text-green-400' : 'text-white'} />
@@ -214,10 +214,10 @@ const ManageUsers = () => {
       </div>
 
       {/* Filters */}
-      <div className={`rounded-xl p-5 border transition-all duration-700 ${
+      <div className={`rounded-2xl p-5 border transition-all duration-700 ${
         darkMode 
           ? 'bg-dark-card border-dark-border' 
-          : 'bg-gradient-to-r from-slate-50 to-white border-slate-100'
+          : 'bg-gradient-to-r from-slate-50 to-white border-brand-primary/10'
       } ${
         isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-5"
       }`} style={{ transitionDelay: "150ms" }}>
@@ -231,20 +231,20 @@ const ManageUsers = () => {
               placeholder="Search users by name or email..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className={`w-full pl-12 pr-4 py-3 rounded-xl border-2 outline-none transition-all ${
+              className={`w-full pl-12 pr-4 py-3 rounded-2xl border-2 outline-none transition-all ${
                 darkMode 
                   ? 'bg-dark-bg border-dark-border text-dark-text placeholder-dark-muted focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/20' 
-                  : 'bg-white border-slate-200 text-slate-800 placeholder-slate-400 focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/20'
+                  : 'bg-white border-slate-200 text-brand-dark placeholder-slate-400 focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/20'
               }`}
             />
           </div>
           <select
             value={filterRole}
             onChange={(e) => setFilterRole(e.target.value)}
-            className={`px-4 py-3 rounded-xl border-2 outline-none transition-all min-w-[180px] ${
+            className={`px-4 py-3 rounded-2xl border-2 outline-none transition-all min-w-[180px] ${
               darkMode 
                 ? 'bg-dark-bg border-dark-border text-dark-text focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/20' 
-                : 'bg-white border-slate-200 text-slate-800 focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/20'
+                : 'bg-white border-slate-200 text-brand-dark focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/20'
             }`}
           >
             <option value="">All Roles</option>
@@ -255,20 +255,20 @@ const ManageUsers = () => {
       </div>
 
       {/* Users Table */}
-      <div className={`rounded-xl border overflow-hidden transition-all duration-700 ${
+      <div className={`rounded-2xl border overflow-hidden transition-all duration-700 ${
         darkMode 
           ? 'bg-dark-card border-dark-border' 
-          : 'bg-white border-slate-100 shadow-lg'
+          : 'bg-white border-brand-primary/10 shadow-lg'
       } ${
         isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-5"
       }`} style={{ transitionDelay: "200ms" }}>
         {loading ? (
-          <div className={`p-12 text-center ${darkMode ? 'text-dark-muted' : 'text-slate-500'}`}>
+          <div className={`p-12 text-center ${darkMode ? 'text-dark-muted' : 'text-brand-slate'}`}>
             <div className="w-12 h-12 border-4 border-brand-primary border-t-transparent rounded-full animate-spin mx-auto"></div>
             <p className="mt-4">Loading users...</p>
           </div>
         ) : filteredUsers.length === 0 ? (
-          <div className={`p-12 text-center ${darkMode ? 'text-dark-muted' : 'text-slate-500'}`}>
+          <div className={`p-12 text-center ${darkMode ? 'text-dark-muted' : 'text-brand-slate'}`}>
             <GroupIcon sx={{ fontSize: 72 }} className="opacity-30" />
             <p className="mt-4">No users found.</p>
           </div>
@@ -279,7 +279,7 @@ const ManageUsers = () => {
                 <tr className={`border-b ${
                   darkMode 
                     ? 'bg-dark-bg border-dark-border' 
-                    : 'bg-slate-50 border-slate-100'
+                    : 'bg-slate-50 border-brand-primary/10'
                 }`}>
                   <th className={`text-left py-4 px-4 lg:px-6 font-semibold text-xs uppercase tracking-wider ${
                     darkMode ? 'text-dark-muted' : 'text-slate-600'
@@ -311,7 +311,7 @@ const ManageUsers = () => {
                   >
                     <td className="py-4 px-4 lg:px-6">
                       <div className="flex items-center gap-3 lg:gap-4">
-                        <div className={`w-10 h-10 lg:w-12 lg:h-12 rounded-xl flex items-center justify-center ${
+                        <div className={`w-10 h-10 lg:w-12 lg:h-12 rounded-2xl flex items-center justify-center ${
                           user.role === 'admin' 
                             ? darkMode ? 'bg-purple-500/20' : 'bg-gradient-to-br from-purple-100 to-purple-50'
                             : darkMode ? 'bg-dark-hover' : 'bg-gradient-to-br from-slate-100 to-slate-50'
@@ -319,15 +319,15 @@ const ManageUsers = () => {
                           {user.role === 'admin' ? (
                             <AdminPanelSettingsIcon sx={{ fontSize: 22 }} className={darkMode ? 'text-purple-400' : 'text-purple-600'} />
                           ) : (
-                            <PersonIcon sx={{ fontSize: 22 }} className={darkMode ? 'text-dark-muted' : 'text-slate-500'} />
+                            <PersonIcon sx={{ fontSize: 22 }} className={darkMode ? 'text-dark-muted' : 'text-brand-slate'} />
                           )}
                         </div>
                         <div className="min-w-0">
                           <p className={`font-semibold truncate ${
-                            darkMode ? 'text-dark-text' : 'text-slate-800'
+                            darkMode ? 'text-dark-text' : 'text-brand-dark'
                           }`}>{user.name || 'No Name'}</p>
                           <p className={`text-xs lg:text-sm flex items-center gap-1 truncate ${
-                            darkMode ? 'text-dark-muted' : 'text-slate-500'
+                            darkMode ? 'text-dark-muted' : 'text-brand-slate'
                           }`}>
                             <EmailIcon sx={{ fontSize: 14 }} />
                             {user.email}
@@ -378,7 +378,7 @@ const ManageUsers = () => {
                           className={`p-2 rounded-lg transition-all ${
                             darkMode 
                               ? 'text-dark-muted hover:text-brand-primary hover:bg-brand-primary/10' 
-                              : 'text-slate-500 hover:text-brand-primary hover:bg-brand-primary/10'
+                              : 'text-brand-slate hover:text-brand-primary hover:bg-brand-primary/10'
                           }`}
                           title="Edit role"
                         >
@@ -390,10 +390,10 @@ const ManageUsers = () => {
                             user.isActive !== false
                               ? darkMode 
                                 ? 'text-dark-muted hover:text-orange-400 hover:bg-orange-500/10' 
-                                : 'text-slate-500 hover:text-orange-500 hover:bg-orange-50'
+                                : 'text-brand-slate hover:text-orange-500 hover:bg-orange-50'
                               : darkMode 
                                 ? 'text-dark-muted hover:text-green-400 hover:bg-green-500/10' 
-                                : 'text-slate-500 hover:text-green-500 hover:bg-green-50'
+                                : 'text-brand-slate hover:text-green-500 hover:bg-green-50'
                           }`}
                           title={user.isActive !== false ? "Deactivate user" : "Activate user"}
                         >
@@ -408,7 +408,7 @@ const ManageUsers = () => {
                           className={`p-2 rounded-lg transition-all ${
                             darkMode 
                               ? 'text-dark-muted hover:text-red-400 hover:bg-red-500/10' 
-                              : 'text-slate-500 hover:text-red-500 hover:bg-red-50'
+                              : 'text-brand-slate hover:text-red-500 hover:bg-red-50'
                           }`}
                           title="Delete user"
                         >
@@ -434,11 +434,11 @@ const ManageUsers = () => {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between mb-6">
-              <h3 className={`text-xl font-bold ${darkMode ? 'text-dark-text' : 'text-slate-800'}`}>Update User Role</h3>
+              <h3 className={`text-xl font-bold ${darkMode ? 'text-dark-text' : 'text-brand-dark'}`}>Update User Role</h3>
               <button
                 onClick={() => setEditModal(null)}
-                className={`p-2 rounded-xl transition-colors ${
-                  darkMode ? 'hover:bg-dark-hover text-dark-muted' : 'hover:bg-slate-100 text-slate-500'
+                className={`p-2 rounded-2xl transition-colors ${
+                  darkMode ? 'hover:bg-dark-hover text-dark-muted' : 'hover:bg-slate-100 text-brand-slate'
                 }`}
               >
                 <CloseIcon sx={{ fontSize: 20 }} />
@@ -446,8 +446,8 @@ const ManageUsers = () => {
             </div>
             
             <div className="mb-6">
-              <div className={`flex items-center gap-3 p-4 rounded-xl ${
-                darkMode ? 'bg-dark-bg' : 'bg-slate-50'
+              <div className={`flex items-center gap-3 p-4 rounded-2xl ${
+                darkMode ? 'bg-dark-bg' : 'bg-brand-cream'
               }`}>
                 <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
                   darkMode ? 'bg-brand-primary/20' : 'bg-brand-primary/10'
@@ -455,8 +455,8 @@ const ManageUsers = () => {
                   <PersonIcon sx={{ fontSize: 20 }} className="text-brand-primary" />
                 </div>
                 <div>
-                  <p className={`font-semibold ${darkMode ? 'text-dark-text' : 'text-slate-800'}`}>{editModal.name || 'No Name'}</p>
-                  <p className={`text-sm ${darkMode ? 'text-dark-muted' : 'text-slate-500'}`}>{editModal.email}</p>
+                  <p className={`font-semibold ${darkMode ? 'text-dark-text' : 'text-brand-dark'}`}>{editModal.name || 'No Name'}</p>
+                  <p className={`text-sm ${darkMode ? 'text-dark-muted' : 'text-brand-slate'}`}>{editModal.email}</p>
                 </div>
               </div>
             </div>
@@ -466,7 +466,7 @@ const ManageUsers = () => {
               <div className="grid grid-cols-2 gap-3">
                 <button
                   onClick={() => handleUpdateRole(editModal._id, 'user')}
-                  className={`p-4 rounded-xl border-2 transition-all ${
+                  className={`p-4 rounded-2xl border-2 transition-all ${
                     editModal.role === 'user'
                       ? darkMode ? 'border-blue-500 bg-blue-500/20' : 'border-blue-500 bg-blue-50'
                       : darkMode ? 'border-dark-border hover:border-blue-500/50' : 'border-slate-200 hover:border-blue-300'
@@ -483,7 +483,7 @@ const ManageUsers = () => {
                 </button>
                 <button
                   onClick={() => handleUpdateRole(editModal._id, 'admin')}
-                  className={`p-4 rounded-xl border-2 transition-all ${
+                  className={`p-4 rounded-2xl border-2 transition-all ${
                     editModal.role === 'admin'
                       ? darkMode ? 'border-purple-500 bg-purple-500/20' : 'border-purple-500 bg-purple-50'
                       : darkMode ? 'border-dark-border hover:border-purple-500/50' : 'border-slate-200 hover:border-purple-300'
@@ -519,12 +519,12 @@ const ManageUsers = () => {
               }`}>
                 <DeleteIcon sx={{ fontSize: 32 }} className="text-red-500" />
               </div>
-              <h3 className={`text-xl font-bold ${darkMode ? 'text-dark-text' : 'text-slate-800'}`}>Delete User?</h3>
-              <p className={`mt-2 ${darkMode ? 'text-dark-muted' : 'text-slate-500'}`}>This action cannot be undone. The user account will be permanently deleted.</p>
+              <h3 className={`text-xl font-bold ${darkMode ? 'text-dark-text' : 'text-brand-dark'}`}>Delete User?</h3>
+              <p className={`mt-2 ${darkMode ? 'text-dark-muted' : 'text-brand-slate'}`}>This action cannot be undone. The user account will be permanently deleted.</p>
               <div className="flex items-center justify-center gap-4 mt-6">
                 <button
                   onClick={() => setDeleteConfirm(null)}
-                  className={`px-6 py-3 font-semibold rounded-xl transition-colors ${
+                  className={`px-6 py-3 font-semibold rounded-2xl transition-colors ${
                     darkMode 
                       ? 'text-dark-text hover:bg-dark-hover' 
                       : 'text-slate-600 hover:bg-slate-100'
@@ -534,7 +534,7 @@ const ManageUsers = () => {
                 </button>
                 <button
                   onClick={() => handleDelete(deleteConfirm)}
-                  className="px-6 py-3 bg-red-500 text-white font-semibold rounded-xl hover:bg-red-600 transition-colors"
+                  className="px-6 py-3 bg-red-500 text-white font-semibold rounded-2xl hover:bg-red-600 transition-colors"
                 >
                   Delete User
                 </button>
@@ -548,3 +548,4 @@ const ManageUsers = () => {
 };
 
 export default ManageUsers;
+
