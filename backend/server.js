@@ -95,6 +95,19 @@ app.use("/api/admin", adminRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/chat", chatRoutes);
 
+// API base route
+app.get("/api", (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: "Shri Venkatesan Traders API",
+    endpoints: {
+      health: "/api/health",
+      products: "/api/products",
+      auth: "/api/auth",
+    },
+  });
+});
+
 // Health check route
 app.get("/api/health", (req, res) => {
   res.status(200).json({

@@ -23,7 +23,7 @@ import LocalOfferIcon from "@mui/icons-material/LocalOffer";
 import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
 
 // Get base URL for images (strip /api suffix if present)
-const API_URL = (import.meta.env.VITE_API_URL || "https://shrivenkatesantraders.onrender.com/api").replace(/\/api\/?$/, "");
+const API_URL = import.meta.env.VITE_API_URL?.replace(/\/api\/?$/, "") ?? "";
 
 const initialAddress = {
   fullName: "",

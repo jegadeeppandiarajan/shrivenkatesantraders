@@ -52,9 +52,9 @@ const ProductDetails = () => {
 
   if (!product) {
     return (
-      <div className="max-w-6xl mx-auto px-4 py-12 text-center">
-        <div className="w-12 h-12 border-4 border-brand-primary border-t-transparent rounded-full animate-spin mx-auto"></div>
-        <p className="text-brand-slate mt-4">Loading product…</p>
+      <div className="max-w-6xl px-4 py-12 mx-auto text-center">
+        <div className="w-12 h-12 mx-auto border-4 rounded-full border-brand-primary border-t-transparent animate-spin"></div>
+        <p className="mt-4 text-brand-slate">Loading product…</p>
       </div>
     );
   }
@@ -126,7 +126,7 @@ const ProductDetails = () => {
             key={i}
             type="button"
             onClick={() => setReviewForm(prev => ({ ...prev, rating: i }))}
-            className="focus:outline-none transition-transform hover:scale-110"
+            className="transition-transform focus:outline-none hover:scale-110"
           >
             {i <= rating ? (
               <StarIcon sx={{ fontSize: size, color: '#f59e0b' }} />
@@ -149,8 +149,11 @@ const ProductDetails = () => {
   };
 
   const hasUserReviewed = reviews.some(review => review.user?._id === user?._id);
-  // Get base URL for images (strip /api suffix if present)
-  const apiUrl = (import.meta.env.VITE_API_URL || 'https://shrivenkatesantraders.onrender.com/api').replace(/\/api\/?$/, '');
+  const resolveImageUrl = (url) => {
+    if (!url || typeof url !== 'string') return '';
+    const cleanUrl = url.trim();
+    return cleanUrl || '';
+  };
   const { darkMode } = useTheme();
 
   return (
@@ -158,24 +161,36 @@ const ProductDetails = () => {
       {/* Animated Background */}
       <AnimatedBackground />
       
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 relative z-10">
+      <div className="relative z-10 max-w-6xl px-4 py-8 mx-auto sm:px-6 lg:px-8 sm:py-12">
       <div className={`rounded-3xl border shadow-sm overflow-hidden ${darkMode ? 'bg-dark-card/90 border-dark-border' : 'bg-white/90 border-brand-primary/10'} backdrop-blur-sm`}>
         {/* Product Header */}
         <div className="p-4 sm:p-6 md:p-8">
           <p className={`text-xs uppercase tracking-[0.3em] sm:tracking-[0.5em] mb-3 sm:mb-4 font-medium ${darkMode ? 'text-dark-muted' : 'text-brand-slate'}`}>{product.category}</p>
           
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 sm:gap-8">
             {/* Image Gallery */}
             <div className="space-y-3 sm:space-y-4">
               {/* Main Image */}
               <div className={`relative aspect-square rounded-2xl overflow-hidden ${darkMode ? 'bg-gradient-to-br from-dark-bg to-dark-hover' : 'bg-gradient-to-br from-brand-cream to-white'}`}>
                 {product.images && product.images.length > 0 ? (
                   <>
-                    <img
-                      src={`${apiUrl}${product.images[selectedImage]?.url}`}
-                      alt={product.images[selectedImage]?.alt || product.name}
-                      className="w-full h-full object-contain"
-                    />
+                    {(() => {
+                      const selected = product.images[selectedImage];
+                      const imageUrl = typeof selected === 'string' ? resolveImageUrl(selected) : resolveImageUrl(selected?.url);
+                      const imageAlt = typeof selected === 'object' ? selected?.alt || product.name : product.name;
+
+                      return imageUrl ? (
+                        <img
+                          src={imageUrl}
+                          alt={imageAlt}
+                          className="object-contain w-full h-full"
+                        />
+                      ) : (
+                        <div className="flex items-center justify-center w-full h-full">
+                          <ImageIcon sx={{ fontSize: { xs: 80, sm: 120 }, color: '#64748B' }} />
+                        </div>
+                      );
+                    })()}
                     {product.images.length > 1 && (
                       <>
                         <button
@@ -194,7 +209,7 @@ const ProductDetails = () => {
                     )}
                   </>
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center">
+                  <div className="flex items-center justify-center w-full h-full">
                     <ImageIcon sx={{ fontSize: { xs: 80, sm: 120 }, color: '#64748B' }} />
                   </div>
                 )}
@@ -202,7 +217,7 @@ const ProductDetails = () => {
 
               {/* Thumbnails */}
               {product.images && product.images.length > 1 && (
-                <div className="flex gap-2 sm:gap-3 overflow-x-auto pb-2">
+                <div className="flex gap-2 pb-2 overflow-x-auto sm:gap-3">
                   {product.images.map((img, index) => (
                     <button
                       key={index}
@@ -211,11 +226,22 @@ const ProductDetails = () => {
                         selectedImage === index ? 'border-brand-primary ring-2 ring-brand-primary/30' : (darkMode ? 'border-dark-border hover:border-dark-hover' : 'border-slate-200 hover:border-slate-300')
                       }`}
                     >
-                      <img
-                        src={`${apiUrl}${img.url}`}
-                        alt={img.alt || `${product.name} ${index + 1}`}
-                        className="w-full h-full object-cover"
-                      />
+                      {(() => {
+                        const imageUrl = typeof img === 'string' ? resolveImageUrl(img) : resolveImageUrl(img?.url);
+                        const imageAlt = typeof img === 'object' ? img?.alt || `${product.name} ${index + 1}` : `${product.name} ${index + 1}`;
+
+                        return imageUrl ? (
+                          <img
+                            src={imageUrl}
+                            alt={imageAlt}
+                            className="object-cover w-full h-full"
+                          />
+                        ) : (
+                          <div className="flex items-center justify-center w-full h-full bg-slate-100 dark:bg-dark-bg">
+                            <ImageIcon sx={{ fontSize: 24, color: '#64748B' }} />
+                          </div>
+                        );
+                      })()}
                     </button>
                   ))}
                 </div>
@@ -223,12 +249,12 @@ const ProductDetails = () => {
             </div>
 
             {/* Product Info */}
-            <div className="space-y-4 sm:space-y-6 mt-6 lg:mt-0">
+            <div className="mt-6 space-y-4 sm:space-y-6 lg:mt-0">
               <div>
                 <h1 className={`text-2xl sm:text-3xl font-display font-bold ${darkMode ? 'text-dark-text' : 'text-brand-dark'}`}>{product.name}</h1>
                 
                 {/* Rating Summary */}
-                <div className="flex items-center gap-2 sm:gap-3 mt-2 sm:mt-3">
+                <div className="flex items-center gap-2 mt-2 sm:gap-3 sm:mt-3">
                   <div className="flex items-center">
                     {renderStars(ratings.average, false, 18)}
                   </div>
@@ -238,7 +264,7 @@ const ProductDetails = () => {
                 </div>
               </div>
 
-              <p className="text-brand-primary text-3xl sm:text-4xl font-display font-bold">₹ {product.price.toLocaleString()}</p>
+              <p className="text-3xl font-bold text-brand-primary sm:text-4xl font-display">₹ {product.price.toLocaleString()}</p>
               
               {product.mrp && product.mrp > product.price && (
                 <div className="flex items-center gap-2 sm:gap-3">
@@ -251,23 +277,23 @@ const ProductDetails = () => {
 
               <p className={`leading-relaxed text-sm sm:text-base font-display ${darkMode ? 'text-dark-muted' : 'text-brand-slate'}`}>{product.description}</p>
 
-              <div className="flex items-center gap-4 sm:gap-6 text-xs sm:text-sm">
+              <div className="flex items-center gap-4 text-xs sm:gap-6 sm:text-sm">
                 <span className={`font-semibold ${product.stock > 0 ? 'text-brand-primary' : 'text-red-500'}`}>
                   {product.stock > 0 ? `In stock: ${product.stock}` : 'Out of stock'}
                 </span>
                 {product.isLowStock && product.stock > 0 && (
-                  <span className="text-amber-500 font-semibold">⚠️ Low stock alert</span>
+                  <span className="font-semibold text-amber-500">⚠️ Low stock alert</span>
                 )}
               </div>
 
               <button 
                 onClick={handleAddToCart} 
                 disabled={isAdding || product.stock === 0}
-                className="w-full px-6 sm:px-8 py-3 sm:py-4 rounded-full bg-brand-primary text-white text-sm sm:text-base font-semibold hover:bg-brand-secondary hover:shadow-lg hover:shadow-brand-primary/30 transition-all disabled:bg-gray-300 disabled:cursor-not-allowed disabled:shadow-none flex items-center justify-center gap-2 sm:gap-3"
+                className="flex items-center justify-center w-full gap-2 px-6 py-3 text-sm font-semibold text-white transition-all rounded-full sm:px-8 sm:py-4 bg-brand-primary sm:text-base hover:bg-brand-secondary hover:shadow-lg hover:shadow-brand-primary/30 disabled:bg-gray-300 disabled:cursor-not-allowed disabled:shadow-none sm:gap-3"
               >
                 {isAdding ? (
                   <>
-                    <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    <div className="w-4 h-4 border-2 border-white rounded-full sm:w-5 sm:h-5 border-t-transparent animate-spin"></div>
                     Adding...
                   </>
                 ) : product.stock === 0 ? (
@@ -288,7 +314,7 @@ const ProductDetails = () => {
           <div className={`border-t p-4 sm:p-6 md:p-8 ${darkMode ? 'border-dark-border' : 'border-brand-primary/10'}`}>
             <h3 className={`text-xs sm:text-sm uppercase tracking-[0.3em] sm:tracking-[0.4em] font-semibold mb-3 sm:mb-4 ${darkMode ? 'text-dark-muted' : 'text-brand-slate'}`}>Specifications</h3>
             <div className={`rounded-2xl p-4 sm:p-6 ${darkMode ? 'bg-dark-bg' : 'bg-brand-cream'}`}>
-              <dl className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+              <dl className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
                 {product.specifications.map((spec) => (
                   <div key={spec.key} className={`flex flex-col sm:flex-row sm:justify-between text-xs sm:text-sm py-2 border-b last:border-0 ${darkMode ? 'border-dark-border' : 'border-brand-primary/10'}`}>
                     <dt className={`mb-1 sm:mb-0 font-display ${darkMode ? 'text-dark-muted' : 'text-brand-slate'}`}>{spec.key}</dt>
@@ -330,11 +356,11 @@ const ProductDetails = () => {
               <button
                 type="submit"
                 disabled={submittingReview}
-                className="flex items-center gap-2 px-6 py-3 bg-brand-primary text-white font-semibold rounded-2xl hover:bg-brand-dark transition-all disabled:opacity-50"
+                className="flex items-center gap-2 px-6 py-3 font-semibold text-white transition-all bg-brand-primary rounded-2xl hover:bg-brand-dark disabled:opacity-50"
               >
                 {submittingReview ? (
                   <>
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    <div className="w-4 h-4 border-2 border-white rounded-full border-t-transparent animate-spin"></div>
                     Submitting...
                   </>
                 ) : (
@@ -350,7 +376,7 @@ const ProductDetails = () => {
           {!user && (
             <div className={`rounded-2xl p-6 mb-8 text-center ${darkMode ? 'bg-dark-bg' : 'bg-brand-cream'}`}>
               <p className={darkMode ? 'text-dark-muted' : 'text-slate-600'}>
-                <button onClick={() => navigate('/login')} className="text-brand-primary font-semibold hover:underline">
+                <button onClick={() => navigate('/login')} className="font-semibold text-brand-primary hover:underline">
                   Login
                 </button>
                 {' '}to write a review
@@ -366,8 +392,8 @@ const ProductDetails = () => {
 
           {/* Reviews List */}
           {loadingReviews ? (
-            <div className="text-center py-8">
-              <div className="w-8 h-8 border-4 border-brand-primary border-t-transparent rounded-full animate-spin mx-auto"></div>
+            <div className="py-8 text-center">
+              <div className="w-8 h-8 mx-auto border-4 rounded-full border-brand-primary border-t-transparent animate-spin"></div>
             </div>
           ) : reviews.length > 0 ? (
             <div className="space-y-4">
@@ -375,9 +401,9 @@ const ProductDetails = () => {
                 <div key={review._id} className={`rounded-2xl p-4 sm:p-6 border transition-colors ${darkMode ? 'bg-dark-bg border-dark-border hover:border-brand-primary/30' : 'bg-white border-brand-primary/10 hover:border-slate-200'}`}>
                   <div className="flex items-start justify-between">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-brand-primary/20 to-brand-secondary/20 flex items-center justify-center">
+                      <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-brand-primary/20 to-brand-secondary/20">
                         {review.user?.avatar ? (
-                          <img src={review.user.avatar} alt={review.user.name} className="w-full h-full rounded-full object-cover" />
+                          <img src={review.user.avatar} alt={review.user.name} className="object-cover w-full h-full rounded-full" />
                         ) : (
                           <PersonIcon sx={{ fontSize: 20, color: '#0A5C80' }} />
                         )}

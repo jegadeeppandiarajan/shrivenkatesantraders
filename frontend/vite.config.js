@@ -8,9 +8,14 @@ export default defineConfig({
     strictPort: true,
     proxy: {
       "/api": {
-        target: "https://shrivenkatesantraders.onrender.com",
+        target: "http://localhost:10000",
         changeOrigin: true,
-        secure: true,
+        secure: false,
+      },
+      "/uploads": {
+        target: "http://localhost:10000",
+        changeOrigin: true,
+        secure: false,
       },
     },
   },

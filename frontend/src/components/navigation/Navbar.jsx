@@ -460,7 +460,7 @@ const Navbar = () => {
             >
               <AutoAwesomeIcon sx={{ fontSize: 22 }} />
               AI Assistant
-            </button>}
+            </button>
           </nav>
 
           {/* User Section */}

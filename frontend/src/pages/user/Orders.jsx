@@ -47,7 +47,7 @@ const getStatusConfig = (darkMode) => ({
 });
 
 // Get base URL for images (strip /api suffix if present)
-const API_URL = (import.meta.env.VITE_API_URL || "https://shrivenkatesantraders.onrender.com/api").replace(/\/api\/?$/, "");
+const API_URL = import.meta.env.VITE_API_URL?.replace(/\/api\/?$/, "") ?? "";
 
 const Orders = () => {
   const dispatch = useDispatch();

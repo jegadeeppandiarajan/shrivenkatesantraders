@@ -17,7 +17,7 @@ import SupportAgentIcon from "@mui/icons-material/SupportAgent";
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 
 // Get base URL for images (strip /api suffix if present)
-const IMAGE_BASE_URL = (import.meta.env.VITE_API_URL || "https://shrivenkatesantraders.onrender.com/api").replace(/\/api\/?$/, "");
+const IMAGE_BASE_URL = import.meta.env.VITE_API_URL?.replace(/\/api\/?$/, "") ?? "";
 
 const Cart = () => {
   const dispatch = useDispatch();
@@ -76,7 +76,7 @@ const Cart = () => {
     if (!product || typeof product !== 'object') return null;
     if (product.images && product.images.length > 0) {
       const img = product.images[0];
-      if (img?.url) return `${IMAGE_BASE_URL}${img.url}`; // Handle object structure from reviews
+      if (img?.url) return img.url.startsWith("http") ? img.url : `${IMAGE_BASE_URL}${img.url}`;
       if (typeof img === 'string') {
           return img.startsWith("http") ? img : `${IMAGE_BASE_URL}${img}`;
       }
